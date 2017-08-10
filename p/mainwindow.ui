@@ -1,0 +1,519 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1270</width>
+    <height>150</height>
+   </rect>
+  </property>
+  <property name="mouseTracking">
+   <bool>true</bool>
+  </property>
+  <property name="windowTitle">
+   <string>Kai</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <widget class="QPushButton" name="btn_submit">
+    <property name="geometry">
+     <rect>
+      <x>540</x>
+      <y>20</y>
+      <width>81</width>
+      <height>81</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true"/>
+    </property>
+    <property name="text">
+     <string>Submit</string>
+    </property>
+   </widget>
+   <widget class="QGroupBox" name="groupBox">
+    <property name="geometry">
+     <rect>
+      <x>620</x>
+      <y>0</y>
+      <width>371</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Kết quả tính toán</string>
+    </property>
+    <widget class="QPlainTextEdit" name="txt_oc1">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>111</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+     <property name="placeholderText">
+      <string>Kết quả 1...</string>
+     </property>
+    </widget>
+    <widget class="QPlainTextEdit" name="txt_oc2">
+     <property name="geometry">
+      <rect>
+       <x>130</x>
+       <y>30</y>
+       <width>111</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="placeholderText">
+      <string>Kết quả 2...</string>
+     </property>
+    </widget>
+    <widget class="QPlainTextEdit" name="txt_oc3">
+     <property name="geometry">
+      <rect>
+       <x>250</x>
+       <y>30</y>
+       <width>111</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>10</pointsize>
+      </font>
+     </property>
+     <property name="placeholderText">
+      <string>Kết quả 3...</string>
+     </property>
+    </widget>
+    <zorder>txt_oc2</zorder>
+    <zorder>txt_oc3</zorder>
+    <zorder>txt_oc1</zorder>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_2">
+    <property name="geometry">
+     <rect>
+      <x>230</x>
+      <y>0</y>
+      <width>311</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Nhập vào</string>
+    </property>
+    <widget class="QPlainTextEdit" name="txt_ic1">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>91</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="tabChangesFocus">
+      <bool>true</bool>
+     </property>
+     <property name="plainText">
+      <string/>
+     </property>
+     <property name="placeholderText">
+      <string>Bộ 1...</string>
+     </property>
+    </widget>
+    <widget class="QPlainTextEdit" name="txt_ic2">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>30</y>
+       <width>91</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="plainText">
+      <string/>
+     </property>
+     <property name="placeholderText">
+      <string>Bộ 2...</string>
+     </property>
+    </widget>
+    <widget class="QPlainTextEdit" name="txt_ic3">
+     <property name="geometry">
+      <rect>
+       <x>210</x>
+       <y>30</y>
+       <width>91</width>
+       <height>61</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="plainText">
+      <string/>
+     </property>
+     <property name="placeholderText">
+      <string>Bộ 3...</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_3">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>0</y>
+      <width>211</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Server</string>
+    </property>
+    <widget class="QLineEdit" name="txt_server">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>191</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="layoutDirection">
+      <enum>Qt::RightToLeft</enum>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_2">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>70</y>
+       <width>21</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;X:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_3">
+     <property name="geometry">
+      <rect>
+       <x>90</x>
+       <y>70</y>
+       <width>21</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;Y:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="spin_x">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>30</x>
+       <y>60</y>
+       <width>61</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+     <property name="maximum">
+      <number>2000</number>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="spin_y">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>60</y>
+       <width>61</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+     <property name="maximum">
+      <number>2000</number>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="btn_ping">
+     <property name="geometry">
+      <rect>
+       <x>180</x>
+       <y>60</y>
+       <width>21</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>P</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>100</y>
+      <width>141</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="layoutDirection">
+     <enum>Qt::RightToLeft</enum>
+    </property>
+    <property name="text">
+     <string>TextLabel</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>100</y>
+      <width>113</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>PushButton</string>
+    </property>
+   </widget>
+   <widget class="QGroupBox" name="groupBox_4">
+    <property name="geometry">
+     <rect>
+      <x>1000</x>
+      <y>0</y>
+      <width>261</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Cài đặt vị trí</string>
+    </property>
+    <widget class="QSpinBox" name="spin_card_x">
+     <property name="geometry">
+      <rect>
+       <x>50</x>
+       <y>20</y>
+       <width>51</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="maximum">
+      <number>2000</number>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="spin_card_y">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>20</y>
+       <width>51</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="maximum">
+      <number>2000</number>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_4">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>20</y>
+       <width>41</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Vị trí:</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_5">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>60</y>
+       <width>41</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>next:</string>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="spin_under">
+     <property name="geometry">
+      <rect>
+       <x>140</x>
+       <y>60</y>
+       <width>51</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="maximum">
+      <number>2000</number>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_6">
+     <property name="geometry">
+      <rect>
+       <x>100</x>
+       <y>60</y>
+       <width>41</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>under:</string>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="spin_next">
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>60</y>
+       <width>51</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="maximum">
+      <number>2000</number>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="spin_btn">
+     <property name="geometry">
+      <rect>
+       <x>200</x>
+       <y>20</y>
+       <width>51</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="maximum">
+      <number>2000</number>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="spin_kc">
+     <property name="geometry">
+      <rect>
+       <x>200</x>
+       <y>60</y>
+       <width>51</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="maximum">
+      <number>2000</number>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_7">
+     <property name="geometry">
+      <rect>
+       <x>170</x>
+       <y>20</y>
+       <width>41</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>nút:</string>
+     </property>
+    </widget>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1270</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>Options</string>
+    </property>
+    <addaction name="actionResset"/>
+   </widget>
+   <addaction name="menu"/>
+  </widget>
+  <action name="actionResset">
+   <property name="text">
+    <string>Reset</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <tabstops>
+  <tabstop>txt_ic1</tabstop>
+  <tabstop>txt_ic2</tabstop>
+  <tabstop>txt_ic3</tabstop>
+  <tabstop>btn_submit</tabstop>
+  <tabstop>txt_oc3</tabstop>
+  <tabstop>txt_oc1</tabstop>
+  <tabstop>pushButton</tabstop>
+  <tabstop>txt_server</tabstop>
+  <tabstop>txt_oc2</tabstop>
+  <tabstop>spin_x</tabstop>
+  <tabstop>spin_y</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Kai</title>
+  <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script> -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div style="margin: 2px;">
+    <div class="container">
+      <div class="block1">
+        <h4 style="margin-left: 10px;margin-top: 5px;">Server</h4>
+        <form action="">
+          <input type="text" id="server" value="dbwkr.herokuapp.com" style="width:150px;margin-left: 10px;" />
+          <br>
+          <label><input type="checkbox"checked style="margin-left: 10px;margin-top:10px;" /> Remember</label>
+          <br>
+        </form>
+      </div>
+      <div class="block2">
+        <h4 style="margin-left: 10px;margin-top: 5px;">Nhập vào data</h4>
+        <div style="margin-left: 10px;">
+          <textarea name="icards1" id="icards1" cols="15" rows="4" placeholder="bộ 1...">jr4t5c8c2cac6c4bqb8t5r2r5b
+          </textarea>
+          <textarea name="icards2" id="icards2" cols="15" rows="4" placeholder="bộ 2...">qtkr6t3b3ckc9r0r5tjt6r4r7r
+          </textarea>
+          <textarea name="icards3" id="icards3" cols="15" rows="4" placeholder="bộ 3...">qr9tkb9c0tjb9b6b7cktat0bab
+          </textarea>
+        </div>
+      </div>
+      <div class="block3">
+        <h4 style="margin-left: 10px;margin-top: 5px;">Kết quả trả về</h4>
+        <div style="margin-left: 10px;">
+          <textarea name="ocards1" id="ocards1" cols="15" rows="4"></textarea>
+          <textarea name="ocards2" id="ocards2" cols="15" rows="4"></textarea>
+          <textarea name="ocards3" id="ocards3" cols="15" rows="4"></textarea>
+          <textarea name="enemy" id="enemy" cols="14" rows="4" placeholder="enenmy..."></textarea>
+        </div>
+      </div>
+      <div class="block4">
+        <button style="height: 70px;width: 70px;" onclick="layData()">Push</button>
+      </div>
+    </div>
+  </div>
+  <script src="native.js"></script>
+  <script>
+    document.getElementById("icards1").focus();
+  </script>
+</body>
+
+</html>

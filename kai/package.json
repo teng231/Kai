@@ -1,0 +1,23 @@
+{
+  "name": "kai",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "./node_modules/.bin/electron src/app.js",
+    "build": "./node_modules/.bin/electron-rebuild",
+    "rebuild": "npm rebuild --runtime=electron --target=1.6.11 --disturl=https://atom.io/download/atom-shell --abi=50",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^1.6.11",
+    "electron-rebuild": "^1.6.0"
+  },
+  "dependencies": {
+    "robotjs": "^0.4.7",
+    "socket.io": "^2.0.3"
+  }
+}
