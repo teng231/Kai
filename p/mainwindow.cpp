@@ -320,6 +320,7 @@ void MainWindow::on_btn_submit_clicked()
 }
 void MainWindow::replyFinished(QNetworkReply*reply){
     QString data=(QString) reply->readAll();
+    ui->txt_kq_server->setPlainText(data);
     QStringList list=data.trimmed().split("\r\n");
 
     int len=list.length();
