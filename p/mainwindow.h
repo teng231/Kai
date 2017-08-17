@@ -15,12 +15,19 @@
 #include <QSettings>
 #include <QMessageBox>
 #include <QDesktopServices>
+#include <QThread>
+#include <QDir>
+#include <QDateTime>
+
 
 
 #include "qauto.h"
 #include "mouse.h"
 #include "microsleep.h"
 #include "calrender.h"
+#include "qgetscreen.h"
+// custome to recognition image
+#include "imagerecognition.h"
 
 namespace Ui {
 class MainWindow;
@@ -39,15 +46,22 @@ public:
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
     void mainClick(QPoint);
+    void mainDoubleClick(QPoint);
     void mainDrag(QPoint beg,QPoint end);
     void mainMove(QPoint p);
     int layVt(QStringList,QString);
     QStringList phanManh(QString);
-    QString lamDep(QString str);
+
     QList<int> sortControl(QString,QString);
+    void saveFile(QPixmap pixmap,QString name);
+    QNetworkAccessManager *manager;
     MMMouseButton btnMouse;
     QList<QPoint> loca;
     QPoint btn_lc;
+    QScreen *screen;
+    ImageRecognition imageRec;
+
+
     bool kt2(QString str);
     void sapBai(QStringList list,QStringList dvao);
     ~MainWindow();
@@ -56,11 +70,20 @@ public:
     void closeEvent(QCloseEvent *event) override;
     void writeSettings();
 
+    void captureCards(int );
+    void rewriteFileName(QStringList,QStringList);
+signals:
+    void updateResult(int i,QStringList list);
+
 private slots:
     void on_btn_submit_clicked();
     void replyFinished(QNetworkReply*);
-    void on_pushButton_clicked();
     void on_btn_ping_clicked();
+    void update(int i,QStringList list);
+    void on_btn_train_clicked();
+    void goNext();
+    void doAll();
+    void on_btn_submit_auto_clicked();
 
 private:
     Ui::MainWindow *ui;

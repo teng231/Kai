@@ -29,7 +29,9 @@ SOURCES += main.cpp \
     mouse.c \
     deadbeef_rand.c \
     screen.c \
-    calrender.cpp
+    calrender.cpp \
+    qgetscreen.cpp \
+    imagerecognition.cpp
 
 HEADERS  += mainwindow.h \
     mouse.h \
@@ -39,11 +41,26 @@ HEADERS  += mainwindow.h \
     microsleep.h \
     deadbeef_rand.h \
     screen.h \
-    calrender.h
+    calrender.h \
+    qgetscreen.h \
+    imagerecognition.h
 
 FORMS    += mainwindow.ui
 
 CONFIG      -=app_bundle
 CONFIG      -= x86_64
 
+# The following lines tells Qmake to use pkg-config for opencv
+QT_CONFIG -= no-pkg-config
+CONFIG  += link_pkgconfig
+PKGCONFIG += opencv
+
+LIBS += -L/usr/local/Cellar/opencv3/3.3.0_1/share/OpenCV/3rdparty/lib/
+LIBS += -L/usr/local/lib/
+# See cautionary note below
 LIBS += -framework ApplicationServices
+
+DISTFILES += \
+    classifier.yml
+
+
