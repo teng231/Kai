@@ -30,7 +30,8 @@ QPixmap QGetScreen::SetToLabel(QScreen *screen,QPoint p,int w,int h)
     return QPixmap();
 }
 
-QImage QGetScreen::GetQImage(QPixmap qp)
+QImage QGetScreen::GetQImage(QScreen *screen,QPoint p,int w,int h)
 {
-    return qp.toImage();
+    QPixmap pix= SetToLabel(screen, p, w, h);
+            return pix.toImage();
 }

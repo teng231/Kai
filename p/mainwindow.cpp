@@ -22,8 +22,12 @@ MainWindow::MainWindow(QWidget *parent) :
 //    qDebug()<<QDir::currentPath();
     //
     connect(this,SIGNAL(updateResult(int,QStringList)),this,SLOT(update(int,QStringList)));
+    connect(this,SIGNAL(goDone()),this,SLOT(goNext()));
+    configs<<"MainWindow"<<"SaoClub";
+    for(int i=0;i<configs.size();i++){
+        ui->cbb_load->addItem(configs[i]);
+    }
     // read setting
-
     manager = new QNetworkAccessManager(this);
     connect(manager, SIGNAL(finished(QNetworkReply*)),
             this, SLOT(replyFinished(QNetworkReply*)));
@@ -39,6 +43,7 @@ MainWindow::MainWindow(QWidget *parent) :
     btn_lc=render->calBtn(ui->spin_btn->value());
     qDebug()<<this->loca;
 
+
 }
 
 MainWindow::~MainWindow()
@@ -50,7 +55,7 @@ void MainWindow::writeSettings()
 {
     QSettings settings;
 
-    settings.beginGroup("MainWindow");
+    settings.beginGroup(ui->cbb_load->currentText());
     settings.setValue("card", QPoint(ui->spin_card_x->value(),ui->spin_card_y->value()));
     settings.setValue("under", ui->spin_under->value());
     settings.setValue("next", ui->spin_next->value());
@@ -63,7 +68,7 @@ void MainWindow::writeSettings()
     settings.setValue("zoom_y_out", ui->spin_zoom_y_2->value());
     settings.setValue("zoom_kc", ui->spin_zoom_kc->value());
 
-    settings.setValue("num", ui->spin_num->value());
+//    settings.setValue("num", ui->spin_num->value());
 
     settings.setValue("rect_px", ui->spin_rec_x->value());
     settings.setValue("rect_py", ui->spin_rec_y->value());
@@ -78,8 +83,9 @@ void MainWindow::writeSettings()
 void MainWindow::readSettings()
 {
     QSettings settings;
+    // get curren config
 
-    settings.beginGroup("MainWindow");
+    settings.beginGroup(ui->cbb_load->currentText());
     ui->spin_card_x->setValue(settings.value("card").toPoint().x());
     ui->spin_card_y->setValue(settings.value("card").toPoint().y());
     ui->spin_next->setValue(settings.value("next").toInt());
@@ -92,7 +98,7 @@ void MainWindow::readSettings()
     ui->spin_zoom_x_2->setValue(settings.value("zoom_x_out").toInt());
     ui->spin_zoom_y_2->setValue(settings.value("zoom_y_out").toInt());
     ui->spin_zoom_kc->setValue(settings.value("zoom_kc").toInt());
-    ui->spin_num->setValue(settings.value("num").toInt());
+//    ui->spin_num->setValue(settings.value("num").toInt());
     ui->spin_rec_x->setValue(settings.value("rect_px").toInt());
     ui->spin_rec_y->setValue(settings.value("rect_py").toInt());
     ui->spin_rec_h->setValue(settings.value("rect_h").toInt());
@@ -286,105 +292,121 @@ void MainWindow::saveFile(QPixmap pixmap,  QString name)
 void MainWindow::doAll()
 {
     emptyOld();
-    int num=ui->spin_num->value();
-    // tiên hanh zoom
-    int kc=ui->spin_zoom_kc->value();
-    for(int i=0;i<num;i++){
-        mainClick(QPoint(ui->spin_zoom_x->value()+i*kc,ui->spin_zoom_y->value()));
-        // zoom lên
-        mainDoubleClick(QPoint(ui->spin_zoom_x->value()+i*kc,ui->spin_zoom_y->value()));
-
+    try {
+        int num=ui->spin_num->value();
+        // tiên hanh zoom
+        int kc=ui->spin_zoom_kc->value();
+        for(int i=0;i<num;i++){
+            mainClick(QPoint(ui->spin_zoom_x->value()+i*kc,ui->spin_zoom_y->value()));
+            // zoom lên
+            mainDoubleClick(QPoint(ui->spin_zoom_x->value()+i*kc,ui->spin_zoom_y->value()));
+            sleep(1);
+            captureCards(i+1);
+            mainDoubleClick(QPoint(ui->spin_zoom_x_2->value(),ui->spin_zoom_y_2->value()));
+        }
+        // đưa dữ liệu vào text f
+        bool getTrain =ui->chk_add_train->isChecked();
+        if(getTrain){
+            QDir recoredDir(QDir::currentPath()+"/temp");
+            QStringList allFiles = recoredDir.entryList(QDir::NoDotAndDotDot | QDir::System | QDir::Hidden  | QDir::AllDirs | QDir::Files, QDir::DirsFirst);//(QDir::Filter::Files,QDir::SortFlag::NoSort)
+            string str="";QStringList lkq;
+            if(allFiles[0]==".DS_Store") allFiles.removeFirst();
+            for(int i=0;i<allFiles.size();i++){
+                string kq=imageRec.loadTrain(QString("/temp/"+allFiles[i]).toStdString());
+                lkq.append(QString::fromStdString(kq));
+                str+=kq;
+            }
+            QString str2=QString::fromStdString(str);
+            if(num==1){
+                ui->txt_ic1->setPlainText(str2.left(26));
+                if(getTrain)rewriteFileName(allFiles,lkq);
+            }
+            else if(num==2){
+                ui->txt_ic1->setPlainText(str2.left(26));
+                ui->txt_ic2->setPlainText(str2.right(26));
+                if(getTrain)rewriteFileName(allFiles,lkq);
+            }
+            else if(num==3){
+                ui->txt_ic1->setPlainText(str2.left(26));
+                ui->txt_ic3->setPlainText(str2.mid(26,26));//xem dòngnày hiện t đang mệt.
+                ui->txt_ic3->setPlainText(str2.right(26));
+                if(getTrain)rewriteFileName(allFiles,lkq);
+            }
+        }
         sleep(1);
-        captureCards(i+1);
-        mainDoubleClick(QPoint(ui->spin_zoom_x_2->value(),ui->spin_zoom_y_2->value()));
+        emit goDone();
+    } catch (...) {
+        QMessageBox::critical(this,tr("Lỗi chụp màn hình"),tr("Điều chỉnh kích cỡ không đúng.Click check show/hide để điều chỉnh lại")
+                              ,QMessageBox::Cancel);
     }
 
-    // đưa dữ liệu vào text f
-    bool getTrain =ui->chk_add_train->isChecked();
-    QDir recoredDir(QDir::currentPath()+"/temp");
-    QStringList allFiles = recoredDir.entryList(QDir::NoDotAndDotDot | QDir::System | QDir::Hidden  | QDir::AllDirs | QDir::Files, QDir::DirsFirst);//(QDir::Filter::Files,QDir::SortFlag::NoSort)
-    string str="";QStringList lkq;
-    if(allFiles[0]==".DS_Store") allFiles.removeFirst();
-    for(int i=0;i<allFiles.size();i++){
-        string kq=imageRec.loadTrain(QString("/temp/"+allFiles[i]).toStdString());
-        lkq.append(QString::fromStdString(kq));
-        str+=kq;
-    }
-    QString str2=QString::fromStdString(str);
-
-    if(num==1){
-        ui->txt_ic1->setPlainText(str2.left(26));
-        if(getTrain)rewriteFileName(allFiles,lkq);
-    }
-    else if(num==2){
-        ui->txt_ic1->setPlainText(str2.left(26));
-        ui->txt_ic2->setPlainText(str2.right(26));
-        if(getTrain)rewriteFileName(allFiles,lkq);
-    }
-        sleep(1);
 }
 
 void MainWindow::goNext()
 {
-    QString cards1=ui->txt_ic1->toPlainText().trimmed(),
-            cards2=ui->txt_ic2->toPlainText().trimmed(),
-            cards3=ui->txt_ic3->toPlainText().trimmed(),
-            server=ui->txt_server->text().append("?");
+    try {
+        QString cards1=ui->txt_ic1->toPlainText().trimmed(),
+                cards2=ui->txt_ic2->toPlainText().trimmed(),
+                cards3=ui->txt_ic3->toPlainText().trimmed(),
+                server=ui->txt_server->text().append("?");
 
-    if(!kiemTra(cards1)) {
-        if(kt2(cards1))
-        {
-            server=server.append("cards1=").append(cards1).append('&');
-            //  capture
-//            num++;
+        if(!kiemTra(cards1)) {
+            if(kt2(cards1))
+            {
+                server=server.append("cards1=").append(cards1).append('&');
+                //  capture
+    //            num++;
+            }
+            else {
+                QMessageBox::warning(this, tr("Lỗi nhập"),
+                                                  tr("Dữ liệu không chính xác tại Bộ 1."),
+                                                  QMessageBox::Close);
+                return;
+            }
         }
-        else {
-            QMessageBox::warning(this, tr("Lỗi nhập"),
-                                              tr("Dữ liệu không chính xác tại Bộ 1."),
+
+        if(!kiemTra(cards2)) {
+            if(kt2(cards2))
+            {
+                server=server.append("cards2=").append(cards2).append('&');
+
+            }
+            else {
+                QMessageBox::warning(this, tr("Lỗi nhập"),
+                                                  tr("Dữ liệu không chính xác tại Bộ 2."),
+                                                  QMessageBox::Close);
+                return;
+            }
+        }
+
+        if(!kiemTra(cards3)) {
+            if(kt2(cards3))
+            {
+                server=server.append("cards3=").append(cards3).append('&');
+
+            }
+            else {
+                QMessageBox::warning(this, tr("Lỗi nhập"),
+                                             tr("Dữ liệu không chính xác tại Bộ 3."),
                                               QMessageBox::Close);
-            return;
+                return;
+            }
         }
-    }
+        server=server.toLower().replace("\n","").trimmed();
+        // request lên server
+        QRegularExpression re("[^rctbajqk0-9]");
+        QRegularExpressionMatch match = re.match(cards1.append(cards2).append(cards3));
 
-    if(!kiemTra(cards2)) {
-        if(kt2(cards2))
-        {
-            server=server.append("cards2=").append(cards2).append('&');
-
+        if (!match.hasMatch()) {
+            manager->get(QNetworkRequest(QUrl(server)));
         }
-        else {
-            QMessageBox::warning(this, tr("Lỗi nhập"),
-                                              tr("Dữ liệu không chính xác tại Bộ 2."),
-                                              QMessageBox::Close);
-            return;
+        else{
+            QMessageBox::warning(this, tr("Lỗi chương trình"),
+                                           tr("Lỗi nhập liệu không chính xác."),
+                                           QMessageBox::Close);
         }
-    }
-
-    if(!kiemTra(cards3)) {
-        if(kt2(cards3))
-        {
-            server=server.append("cards3=").append(cards3).append('&');
-
-        }
-        else {
-            QMessageBox::warning(this, tr("Lỗi nhập"),
-                                         tr("Dữ liệu không chính xác tại Bộ 3."),
-                                          QMessageBox::Close);
-            return;
-        }
-    }
-    server=server.toLower().replace("\n","").trimmed();
-    // request lên server
-    QRegularExpression re("[^rctbajqk0-9]");
-    QRegularExpressionMatch match = re.match(cards1.append(cards2).append(cards3));
-
-    if (!match.hasMatch()) {
-        manager->get(QNetworkRequest(QUrl(server)));
-    }
-    else{
-        QMessageBox::warning(this, tr("Lỗi chương trình"),
-                                       tr("Lỗi nhập liệu không chính xác."),
-                                       QMessageBox::Close);
+    } catch (...) {
+        return;
     }
 }
 
@@ -411,7 +433,9 @@ void MainWindow::sapBai(QStringList list, QStringList dvao)
                 }
                  //so chi click
                 mainClick(QPoint(btn_lc.x()+kc*i,btn_lc.y()));
+
             }
+
         }
         catch(...){
             QMessageBox::warning(this, tr("Lỗi chương trình"),
@@ -422,86 +446,96 @@ void MainWindow::sapBai(QStringList list, QStringList dvao)
 void MainWindow::captureCards(int vt)
 {
     // Tạo list
-    QList<QPoint> temp;
-    int h=ui->spin_rec_h->value()
-            ,w=ui->spin_rec_w->value()
-            ,_x=ui->spin_rec_x->value()
-            ,_y=ui->spin_rec_y->value()
-            ,kc_x=ui->spin_rec_kc_x->value()
-            ,kc_y=ui->spin_rec_kc_y->value();
-    // tạo point
-    bool ischecked= ui->chk_done->isChecked();
-    for(int i=0;i<3;i++){
-       temp.append(QPoint(_x+kc_x*i,_y));
-    }
-    for(int i=0;i<5;i++){
-       temp.append(QPoint(_x+kc_x*i,_y+kc_y));
-    }
-    for(int i=0;i<5;i++){
-       temp.append(QPoint(_x+kc_x*i,_y+kc_y*2));
-    }
-//    qDebug()<<temp;
-
-    if(vt==1){
-        if(ischecked){
-            ui->txt_1_0->setPixmap(QGetScreen::SetToLabel(screen,temp[0],w,h));
-            ui->txt_1_1->setPixmap(QGetScreen::SetToLabel(screen,temp[1],w,h));
-            ui->txt_1_2->setPixmap(QGetScreen::SetToLabel(screen,temp[2],w,h));
-            ui->txt_1_3->setPixmap(QGetScreen::SetToLabel(screen,temp[3],w,h));
-            ui->txt_1_4->setPixmap(QGetScreen::SetToLabel(screen,temp[4],w,h));
-            ui->txt_1_5->setPixmap(QGetScreen::SetToLabel(screen,temp[5],w,h));
-            ui->txt_1_6->setPixmap(QGetScreen::SetToLabel(screen,temp[6],w,h));
-            ui->txt_1_7->setPixmap(QGetScreen::SetToLabel(screen,temp[7],w,h));
-            ui->txt_1_8->setPixmap(QGetScreen::SetToLabel(screen,temp[8],w,h));
-            ui->txt_1_9->setPixmap(QGetScreen::SetToLabel(screen,temp[9],w,h));
-            ui->txt_1_10->setPixmap(QGetScreen::SetToLabel(screen,temp[10],w,h));
-            ui->txt_1_11->setPixmap(QGetScreen::SetToLabel(screen,temp[11],w,h));
-            ui->txt_1_12->setPixmap(QGetScreen::SetToLabel(screen,temp[12],w,h));
+    try {
+        QList<QPoint> temp;
+        int h=ui->spin_rec_h->value()
+                ,w=ui->spin_rec_w->value()
+                ,_x=ui->spin_rec_x->value()
+                ,_y=ui->spin_rec_y->value()
+                ,kc_x=ui->spin_rec_kc_x->value()
+                ,kc_y=ui->spin_rec_kc_y->value();
+        // tạo point
+        bool ischecked= ui->chk_done->isChecked(),isTrain=ui->chk_add_train->isChecked();
+        for(int i=0;i<3;i++){
+           temp.append(QPoint(_x+kc_x*i,_y));
         }
-        for(int i=0;i<13;i++){
-            saveFile(QGetScreen::SetToLabel(screen,temp[i],w,h),QString::number(i+1+100)+".png");
+        for(int i=0;i<5;i++){
+           temp.append(QPoint(_x+kc_x*i,_y+kc_y));
         }
+        for(int i=0;i<5;i++){
+           temp.append(QPoint(_x+kc_x*i,_y+kc_y*2));
         }
-        if(vt==2){
+        QStringList strl;
+        if(vt==1){
             if(ischecked){
-                ui->txt_2_0->setPixmap(QGetScreen::SetToLabel(screen,temp[0],w,h));
-                ui->txt_2_1->setPixmap(QGetScreen::SetToLabel(screen,temp[1],w,h));
-                ui->txt_2_2->setPixmap(QGetScreen::SetToLabel(screen,temp[2],w,h));
-                ui->txt_2_3->setPixmap(QGetScreen::SetToLabel(screen,temp[3],w,h));
-                ui->txt_2_4->setPixmap(QGetScreen::SetToLabel(screen,temp[4],w,h));
-                ui->txt_2_5->setPixmap(QGetScreen::SetToLabel(screen,temp[5],w,h));
-                ui->txt_2_6->setPixmap(QGetScreen::SetToLabel(screen,temp[6],w,h));
-                ui->txt_2_7->setPixmap(QGetScreen::SetToLabel(screen,temp[7],w,h));
-                ui->txt_2_8->setPixmap(QGetScreen::SetToLabel(screen,temp[8],w,h));
-                ui->txt_2_9->setPixmap(QGetScreen::SetToLabel(screen,temp[9],w,h));
-                ui->txt_2_10->setPixmap(QGetScreen::SetToLabel(screen,temp[10],w,h));
-                ui->txt_2_11->setPixmap(QGetScreen::SetToLabel(screen,temp[11],w,h));
-                ui->txt_2_12->setPixmap(QGetScreen::SetToLabel(screen,temp[12],w,h));
+                ui->txt_1_0->setPixmap(QGetScreen::SetToLabel(screen,temp[0],w,h));
+                ui->txt_1_1->setPixmap(QGetScreen::SetToLabel(screen,temp[1],w,h));
+                ui->txt_1_2->setPixmap(QGetScreen::SetToLabel(screen,temp[2],w,h));
+                ui->txt_1_3->setPixmap(QGetScreen::SetToLabel(screen,temp[3],w,h));
+                ui->txt_1_4->setPixmap(QGetScreen::SetToLabel(screen,temp[4],w,h));
+                ui->txt_1_5->setPixmap(QGetScreen::SetToLabel(screen,temp[5],w,h));
+                ui->txt_1_6->setPixmap(QGetScreen::SetToLabel(screen,temp[6],w,h));
+                ui->txt_1_7->setPixmap(QGetScreen::SetToLabel(screen,temp[7],w,h));
+                ui->txt_1_8->setPixmap(QGetScreen::SetToLabel(screen,temp[8],w,h));
+                ui->txt_1_9->setPixmap(QGetScreen::SetToLabel(screen,temp[9],w,h));
+                ui->txt_1_10->setPixmap(QGetScreen::SetToLabel(screen,temp[10],w,h));
+                ui->txt_1_11->setPixmap(QGetScreen::SetToLabel(screen,temp[11],w,h));
+                ui->txt_1_12->setPixmap(QGetScreen::SetToLabel(screen,temp[12],w,h));
             }
+    //        qDebug()<<QString::fromStdString(imageRec.loadTrain(QGetScreen::GetQImage(screen,temp[0],w,h)));
             for(int i=0;i<13;i++){
-                saveFile(QGetScreen::SetToLabel(screen,temp[i],w,h),QString::number(i+1+200)+".png");
+               if(isTrain)saveFile(QGetScreen::SetToLabel(screen,temp[i],w,h),QString::number(i+1+100)+".png");
+                strl<<QString::fromStdString(imageRec.loadTrain(QGetScreen::GetQImage(screen,temp[i],w,h)));
             }
-        }
-        if(vt==3){
-            if(ischecked){
-                ui->txt_3_0->setPixmap(QGetScreen::SetToLabel(screen,temp[0],w,h));
-                ui->txt_3_1->setPixmap(QGetScreen::SetToLabel(screen,temp[1],w,h));
-                ui->txt_3_2->setPixmap(QGetScreen::SetToLabel(screen,temp[2],w,h));
-                ui->txt_3_3->setPixmap(QGetScreen::SetToLabel(screen,temp[3],w,h));
-                ui->txt_3_4->setPixmap(QGetScreen::SetToLabel(screen,temp[4],w,h));
-                ui->txt_3_5->setPixmap(QGetScreen::SetToLabel(screen,temp[5],w,h));
-                ui->txt_3_6->setPixmap(QGetScreen::SetToLabel(screen,temp[6],w,h));
-                ui->txt_3_7->setPixmap(QGetScreen::SetToLabel(screen,temp[7],w,h));
-                ui->txt_3_8->setPixmap(QGetScreen::SetToLabel(screen,temp[8],w,h));
-                ui->txt_3_9->setPixmap(QGetScreen::SetToLabel(screen,temp[9],w,h));
-                ui->txt_3_10->setPixmap(QGetScreen::SetToLabel(screen,temp[10],w,h));
-                ui->txt_3_11->setPixmap(QGetScreen::SetToLabel(screen,temp[11],w,h));
-                ui->txt_3_12->setPixmap(QGetScreen::SetToLabel(screen,temp[12],w,h));
+            ui->txt_ic1->setPlainText(strl.join(""));
             }
-            for(int i=0;i<13;i++){
-                saveFile(QGetScreen::SetToLabel(screen,temp[i],w,h),QString::number(i+1+300)+".png");
+            if(vt==2){
+                if(ischecked){
+                    ui->txt_2_0->setPixmap(QGetScreen::SetToLabel(screen,temp[0],w,h));
+                    ui->txt_2_1->setPixmap(QGetScreen::SetToLabel(screen,temp[1],w,h));
+                    ui->txt_2_2->setPixmap(QGetScreen::SetToLabel(screen,temp[2],w,h));
+                    ui->txt_2_3->setPixmap(QGetScreen::SetToLabel(screen,temp[3],w,h));
+                    ui->txt_2_4->setPixmap(QGetScreen::SetToLabel(screen,temp[4],w,h));
+                    ui->txt_2_5->setPixmap(QGetScreen::SetToLabel(screen,temp[5],w,h));
+                    ui->txt_2_6->setPixmap(QGetScreen::SetToLabel(screen,temp[6],w,h));
+                    ui->txt_2_7->setPixmap(QGetScreen::SetToLabel(screen,temp[7],w,h));
+                    ui->txt_2_8->setPixmap(QGetScreen::SetToLabel(screen,temp[8],w,h));
+                    ui->txt_2_9->setPixmap(QGetScreen::SetToLabel(screen,temp[9],w,h));
+                    ui->txt_2_10->setPixmap(QGetScreen::SetToLabel(screen,temp[10],w,h));
+                    ui->txt_2_11->setPixmap(QGetScreen::SetToLabel(screen,temp[11],w,h));
+                    ui->txt_2_12->setPixmap(QGetScreen::SetToLabel(screen,temp[12],w,h));
+                }
+                for(int i=0;i<13;i++){
+                    if(isTrain)saveFile(QGetScreen::SetToLabel(screen,temp[i],w,h),QString::number(i+1+200)+".png");
+                    strl<<QString::fromStdString(imageRec.loadTrain(QGetScreen::GetQImage(screen,temp[i],w,h)));
+                }
+                ui->txt_ic2->setPlainText(strl.join(""));
             }
-        }
+            if(vt==3){
+                if(ischecked){
+                    ui->txt_3_0->setPixmap(QGetScreen::SetToLabel(screen,temp[0],w,h));
+                    ui->txt_3_1->setPixmap(QGetScreen::SetToLabel(screen,temp[1],w,h));
+                    ui->txt_3_2->setPixmap(QGetScreen::SetToLabel(screen,temp[2],w,h));
+                    ui->txt_3_3->setPixmap(QGetScreen::SetToLabel(screen,temp[3],w,h));
+                    ui->txt_3_4->setPixmap(QGetScreen::SetToLabel(screen,temp[4],w,h));
+                    ui->txt_3_5->setPixmap(QGetScreen::SetToLabel(screen,temp[5],w,h));
+                    ui->txt_3_6->setPixmap(QGetScreen::SetToLabel(screen,temp[6],w,h));
+                    ui->txt_3_7->setPixmap(QGetScreen::SetToLabel(screen,temp[7],w,h));
+                    ui->txt_3_8->setPixmap(QGetScreen::SetToLabel(screen,temp[8],w,h));
+                    ui->txt_3_9->setPixmap(QGetScreen::SetToLabel(screen,temp[9],w,h));
+                    ui->txt_3_10->setPixmap(QGetScreen::SetToLabel(screen,temp[10],w,h));
+                    ui->txt_3_11->setPixmap(QGetScreen::SetToLabel(screen,temp[11],w,h));
+                    ui->txt_3_12->setPixmap(QGetScreen::SetToLabel(screen,temp[12],w,h));
+                }
+                for(int i=0;i<13;i++){
+                       if(isTrain)saveFile(QGetScreen::SetToLabel(screen,temp[i],w,h),QString::number(i+1+300)+".png");
+                      strl<<QString::fromStdString(imageRec.loadTrain(QGetScreen::GetQImage(screen,temp[i],w,h)));
+                }
+                ui->txt_ic3->setPlainText(strl.join(""));
+            }
+    } catch (...) {
+        return;
+    }
 }
 
 void MainWindow::rewriteFileName(QStringList ltep, QStringList llabel)
@@ -518,28 +552,39 @@ void MainWindow::on_btn_submit_clicked()
         goNext();
 }
 void MainWindow::replyFinished(QNetworkReply*reply){
-    QString data=(QString) reply->readAll();
-    ui->txt_kq_server->setPlainText(data);
-    QStringList list=data.trimmed().split("\r\n");
-    int len=list.size();
-    QStringList dvao;
-    if(len==3){
-        emit updateResult(len,list);
-        dvao<<ui->txt_ic1->toPlainText().replace("\n","")
-                <<ui->txt_ic2->toPlainText().replace("\n","")
-                <<ui->txt_ic3->toPlainText().replace("\n","");
-    }
-    else if(len==2){
-        emit updateResult(len,list);
-        dvao<<ui->txt_ic1->toPlainText().replace("\n","")
-                <<ui->txt_ic2->toPlainText().replace("\n","");
-    }
-    else if(len==1)
-        {
-            emit updateResult(len,list);
-            dvao<<ui->txt_ic1->toPlainText().replace("\n","");
+    try {
+        QString data=(QString) reply->readAll();
+        ui->txt_kq_server->setPlainText(data);
+        QStringList list=data.trimmed().split("\r\n");
+        if(list.join("")=="Error: NGoại lệ của server báo Tể - code 500"){
+            emptyOld();
+            return;
         }
-        sapBai(list,dvao);
+        int len=list.size();
+        QStringList dvao;
+        if(len==3){
+            emit updateResult(len,list);
+            dvao<<ui->txt_ic1->toPlainText().replace("\n","")
+                    <<ui->txt_ic2->toPlainText().replace("\n","")
+                    <<ui->txt_ic3->toPlainText().replace("\n","");
+        }
+        else if(len==2){
+            emit updateResult(len,list);
+            dvao<<ui->txt_ic1->toPlainText().replace("\n","")
+                    <<ui->txt_ic2->toPlainText().replace("\n","");
+        }
+        else if(len==1)
+            {
+                emit updateResult(len,list);
+                dvao<<ui->txt_ic1->toPlainText().replace("\n","");
+            }
+            sapBai(list,dvao);
+    } catch (...) {
+        QMessageBox::critical(this, tr("Cảnh báo"),
+                              ("Kiểm tra các kết nối mạng. Dữ liệu xuất hiện ngoại lệ"),
+                              QMessageBox::Close);
+    }
+
 }
 
 void MainWindow::on_btn_ping_clicked()
@@ -549,24 +594,29 @@ void MainWindow::on_btn_ping_clicked()
 
 void MainWindow::update(int i, QStringList list)
 {
-    if(i==3){
-        ui->txt_oc1->setPlainText(dinhDang(list[0]));
-        ui->txt_oc2->setPlainText(dinhDang(list[1]));
-        ui->txt_oc3->setPlainText(dinhDang(list[2]));
-    }
-    if(i==2){
-        ui->txt_oc1->setPlainText(dinhDang(list[0]));
-        ui->txt_oc2->setPlainText(dinhDang(list[1]));
-    }
-    if(i==1){
-        ui->txt_oc1->setPlainText(dinhDang(list[0]));
+    try {
+        if(i==3){
+            ui->txt_oc1->setPlainText(dinhDang(list[0]));
+            ui->txt_oc2->setPlainText(dinhDang(list[1]));
+            ui->txt_oc3->setPlainText(dinhDang(list[2]));
+        }
+        if(i==2){
+            ui->txt_oc1->setPlainText(dinhDang(list[0]));
+            ui->txt_oc2->setPlainText(dinhDang(list[1]));
+        }
+        if(i==1){
+            ui->txt_oc1->setPlainText(dinhDang(list[0]));
+        }
+    } catch (...) {
+        return;
     }
 }
 
 void MainWindow::on_btn_train_clicked()
 {
     try {
-        int iii=imageRec.train();
+        QString fileName="classifier.yml";
+        int iii=imageRec.train("Raw",fileName.toStdString(),24*40);
         QMessageBox::critical(this, tr("Cảnh báo"),
                                           ("Đã retrain file updated classifier.yml model="+QString::number(iii)),
                                           QMessageBox::Close);
@@ -576,6 +626,42 @@ void MainWindow::on_btn_train_clicked()
 
 void MainWindow::on_btn_submit_auto_clicked()
 {
-        doAll();
-        goNext();
+    int res=0;
+
+    while(true){
+        if(imageRec.loadTrainStart(QGetScreen::GetQImage(screen,QPoint(btn_lc.x()-20,btn_lc.y()-10),70,20))==1)
+            res++;
+        else{
+            if(res!=0) res--;
+        }
+        if(res==3){
+            doAll();
+            res=0;
+
+        }
+
+    }
+
+}
+
+void MainWindow::activateAutoClick()
+{
+    mainClick((QPoint(629,128)));
+}
+
+void MainWindow::on_btn_load_config_clicked()
+{
+    readSettings();
+}
+
+void MainWindow::on_btn_train_start_clicked()
+{
+    try {
+        QString fileName="start.yml";
+        int iii=imageRec.train("start",fileName.toStdString(),70*20);
+        QMessageBox::critical(this, tr("Cảnh báo"),
+                                          ("Đã retrain file updated start.yml model="+QString::number(iii)),
+                                          QMessageBox::Close);
+    } catch (...) {
+    }
 }

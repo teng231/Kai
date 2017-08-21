@@ -43,7 +43,8 @@ HEADERS  += mainwindow.h \
     screen.h \
     calrender.h \
     qgetscreen.h \
-    imagerecognition.h
+    imagerecognition.h \
+    timer.h
 
 FORMS    += mainwindow.ui
 
@@ -51,7 +52,7 @@ CONFIG      -=app_bundle
 CONFIG      -= x86_64
 
 # The following lines tells Qmake to use pkg-config for opencv
-QT_CONFIG -= no-pkg-config
+QT_CONFIG -= no-pkg-confi
 CONFIG  += link_pkgconfig
 PKGCONFIG += opencv
 
@@ -61,6 +62,7 @@ LIBS += -L/usr/local/lib/
 LIBS += -framework ApplicationServices
 
 DISTFILES += \
-    classifier.yml
+    classifier.yml \
+    start.yml
 
 

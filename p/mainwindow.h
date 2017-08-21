@@ -15,9 +15,8 @@
 #include <QSettings>
 #include <QMessageBox>
 #include <QDesktopServices>
-#include <QThread>
 #include <QDir>
-#include <QDateTime>
+#include <QTimer>
 
 
 
@@ -26,8 +25,10 @@
 #include "microsleep.h"
 #include "calrender.h"
 #include "qgetscreen.h"
+#include "timer.h"
 // custome to recognition image
 #include "imagerecognition.h"
+
 
 namespace Ui {
 class MainWindow;
@@ -41,6 +42,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     bool kiemTra(QString);
+    QStringList configs;
     QString dinhDang(QString);
     void emptyOld();
     void mouseMoveEvent(QMouseEvent *event) override;
@@ -60,11 +62,14 @@ public:
     QPoint btn_lc;
     QScreen *screen;
     ImageRecognition imageRec;
+    Timer t;
+    unsigned long dt = 10; //in seconds
 
-
+    void doAll();
     bool kt2(QString str);
     void sapBai(QStringList list,QStringList dvao);
     ~MainWindow();
+
 
     void readSettings();
     void closeEvent(QCloseEvent *event) override;
@@ -74,16 +79,23 @@ public:
     void rewriteFileName(QStringList,QStringList);
 signals:
     void updateResult(int i,QStringList list);
-
+    void goDone();
 private slots:
     void on_btn_submit_clicked();
     void replyFinished(QNetworkReply*);
     void on_btn_ping_clicked();
     void update(int i,QStringList list);
     void on_btn_train_clicked();
+
+
     void goNext();
-    void doAll();
     void on_btn_submit_auto_clicked();
+
+    void activateAutoClick();
+
+    void on_btn_load_config_clicked();
+
+    void on_btn_train_start_clicked();
 
 private:
     Ui::MainWindow *ui;

@@ -11,13 +11,14 @@ std::vector<std::string> trainingFilenames;
 
 ImageRecognition::ImageRecognition()
 {
-
+    svm = cv::ml::StatModel::load<cv::ml::SVM>(main);//svm2
+    svm2 = cv::ml::StatModel::load<cv::ml::SVM>(start);//svm2
 }
 
 /// Lấy dữ liệu cho việc train
-void ImageRecognition::getTrain()
+void ImageRecognition::getTrain(QString dir)
 {
-    QDir recoredDir(QString(PATH)+"Raw");
+    QDir recoredDir(dir);
     QStringList allFiles = recoredDir.entryList(QDir::NoDotAndDotDot | QDir::System | QDir::Hidden  | QDir::AllDirs | QDir::Files, QDir::DirsFirst);//(QDir::Filter::Files,QDir::SortFlag::NoSort)
     int key=0;
     vector<string> labels2;
@@ -38,10 +39,10 @@ void ImageRecognition::getTrain()
 
 /// tiến hànhtrain
 ///
-int ImageRecognition::train()
+int ImageRecognition::train(QString dir,string fileSave,int imgArea= 24*40)
 {
-    getTrain();
-    int imgArea = 24*40;
+    getTrain(QString(PATH)+dir);
+
     cv::Mat trainingMat(labels.size(), imgArea, CV_32FC1);
 
     // loop over training files
@@ -51,7 +52,7 @@ int ImageRecognition::train()
         std::cout << "Analyzing label -> file: " <<  labels[index] << "|" <<  trainingFilenames[index] << std::endl;
 
         // read image file (grayscale)
-        cv::Mat imgMat = cv::imread(string(PATH)+"Raw/"+trainingFilenames[index], 0);
+        cv::Mat imgMat = cv::imread(string(PATH)+dir.toStdString() +"/"+trainingFilenames[index], 0);
 
         int ii = 0; // Current column in training_mat
 
@@ -92,8 +93,9 @@ int ImageRecognition::train()
 
     // store trained classifier
     std::cout << "Saving SVM data" << std::endl;
-    svm->save("classifier.yml");
-    svm->save(string(PATH)+"classifier.yml");
+    svm->save(fileSave);// lưu tại chương trình.
+//    Lưu tai lõi dev
+    svm->save(string(PATH)+fileSave);
     return labels.size();
 }
 
@@ -103,13 +105,11 @@ string ImageRecognition::loadTrain(string name)
 {
     try{
         // Load SVM classifier
-        cv::Ptr<cv::ml::SVM> svm = cv::ml::StatModel::load<cv::ml::SVM>("classifier.yml");
-
-
         // read image file (grayscale)
         cv::Mat imgMat = cv::imread(QDir::currentPath().toStdString()+name,0);
         resize(imgMat,imgMat,Size(24,40));
         // convert 2d to 1d
+
         cv::Mat testMat = imgMat.clone().reshape(1,1);
         testMat.convertTo(testMat, CV_32F);
 
@@ -118,24 +118,40 @@ string ImageRecognition::loadTrain(string name)
             num = svm->predict(testMat);
 
 //            std::cout << std::endl  << "Recognizing following number -> " << getResult() << std::endl << std::endl;
-        return getResult();
+
+            return getResult();
 
         }catch(cv::Exception ex){
             return "~~";
     }
 }
 
+int ImageRecognition::loadTrainStart(QImage src)
+{
+    try{
+      cv::Mat imgMat=QImageToCvMat(src);
+      cv::cvtColor(imgMat, imgMat, CV_BGR2GRAY);
+      resize(imgMat,imgMat,Size(70,20));
+      // convert 2d to 1d
+      cv::Mat testMat = imgMat.clone().reshape(1,1);
+      testMat.convertTo(testMat, CV_32F);
+
+      // try to predict which number has been drawn
+
+          return num = svm2->predict(testMat);
+
+  //            std::cout << std::endl  << "Recognizing following number -> " << getResult() << std::endl << std::endl;
+
+    }catch(cv::Exception ex){
+          return -1;
+  }
+}
+
 string ImageRecognition::loadTrain(QImage src)
 {
       try{
-        cv::Ptr<cv::ml::SVM> svm = cv::ml::StatModel::load<cv::ml::SVM>("classifier.yml");
-
-        qDebug()<<src.height()<< src.width();
-
         cv::Mat imgMat=QImageToCvMat(src);
-
-        imshow("",imgMat);
-
+        cv::cvtColor(imgMat, imgMat, CV_BGR2GRAY);
         resize(imgMat,imgMat,Size(24,40));
         // convert 2d to 1d
         cv::Mat testMat = imgMat.clone().reshape(1,1);
@@ -230,7 +246,7 @@ Mat ImageRecognition::QImageToCvMat(QImage inImage)
           {
              // 8-bit, 4 channel
              case QImage::Format_ARGB32:
-             case QImage::Format_ARGB32_Premultiplied:
+             case QImage::Format_ARGB32_Premultiplied://is
             case QImage::Format_RGB32:
             case QImage::Format_RGBX8888:
            case QImage::Format_RGBA8888:
@@ -241,7 +257,6 @@ Mat ImageRecognition::QImageToCvMat(QImage inImage)
                               const_cast<uchar*>(inImage.bits()),
                               static_cast<size_t>(inImage.bytesPerLine())
                               );
-
                 return mat;
              }
 
@@ -252,13 +267,13 @@ Mat ImageRecognition::QImageToCvMat(QImage inImage)
 
                 QImage   swapped = inImage;
                 swapped = swapped.rgbSwapped();
-
+                qDebug()<<2;
                 return cv::Mat( swapped.height(), swapped.width(),
                                 CV_8UC3,
                                 const_cast<uchar*>(swapped.bits()),
                                 static_cast<size_t>(swapped.bytesPerLine())
                                 ).clone();
-             }
+                }
 
              // 8-bit, 1 channel
              case QImage::Format_Indexed8:
@@ -270,7 +285,6 @@ Mat ImageRecognition::QImageToCvMat(QImage inImage)
                               const_cast<uchar*>(inImage.bits()),
                               static_cast<size_t>(inImage.bytesPerLine())
                               );
-
                 return mat;
              }
              default:
@@ -278,7 +292,7 @@ Mat ImageRecognition::QImageToCvMat(QImage inImage)
                 break;
           }
 
-          return cv::Mat();
+    return cv::Mat();
 }
 
 

@@ -15,7 +15,7 @@ public:
     static QString GetScreenBase64String(QScreen *screen,QPoint p,int w,int h);
     static QPixmap SetToLabel(QScreen *screen,QPoint p,int w,int h);
     static void saveImage(QScreen *screen,int w,int h);
-    static QImage GetQImage(QPixmap qp);
+    static QImage GetQImage(QScreen *screen,QPoint p,int w,int h);
 };
 
 #endif // QGETSCREEN_H
