@@ -11,6 +11,7 @@ std::vector<std::string> trainingFilenames;
 
 ImageRecognition::ImageRecognition()
 {
+    // Load SVM classifier
     svm = cv::ml::StatModel::load<cv::ml::SVM>(main);//svm2
     svm2 = cv::ml::StatModel::load<cv::ml::SVM>(start);//svm2
 }
@@ -104,10 +105,11 @@ int ImageRecognition::train(QString dir,string fileSave,int imgArea= 24*40)
 string ImageRecognition::loadTrain(string name)
 {
     try{
-        // Load SVM classifier
+
         // read image file (grayscale)
         cv::Mat imgMat = cv::imread(QDir::currentPath().toStdString()+name,0);
         resize(imgMat,imgMat,Size(24,40));
+        imshow("hello",imgMat);
         // convert 2d to 1d
 
         cv::Mat testMat = imgMat.clone().reshape(1,1);
@@ -135,6 +137,7 @@ int ImageRecognition::loadTrainStart(QImage src)
       // convert 2d to 1d
       cv::Mat testMat = imgMat.clone().reshape(1,1);
       testMat.convertTo(testMat, CV_32F);
+
 
       // try to predict which number has been drawn
 

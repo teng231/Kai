@@ -128,6 +128,9 @@
         <height>24</height>
        </rect>
       </property>
+      <property name="toolTip">
+       <string>X-Point bắt đầu</string>
+      </property>
       <property name="maximum">
        <number>2000</number>
       </property>
@@ -140,6 +143,9 @@
         <width>51</width>
         <height>24</height>
        </rect>
+      </property>
+      <property name="toolTip">
+       <string>Khoảng cách tới Point ở dưới</string>
       </property>
       <property name="maximum">
        <number>2000</number>
@@ -167,6 +173,9 @@
         <height>24</height>
        </rect>
       </property>
+      <property name="toolTip">
+       <string>Y-Point bắt đầu</string>
+      </property>
       <property name="maximum">
        <number>2000</number>
       </property>
@@ -192,6 +201,9 @@
         <width>51</width>
         <height>24</height>
        </rect>
+      </property>
+      <property name="toolTip">
+       <string>Khoảng cách tới nút tiếp theo</string>
       </property>
       <property name="maximum">
        <number>2000</number>
@@ -219,6 +231,9 @@
         <height>24</height>
        </rect>
       </property>
+      <property name="toolTip">
+       <string>Tọa độ y bonus của nút So Chi</string>
+      </property>
       <property name="maximum">
        <number>2000</number>
       </property>
@@ -231,6 +246,9 @@
         <width>51</width>
         <height>24</height>
        </rect>
+      </property>
+      <property name="toolTip">
+       <string>Khoảng cách tới bot tiếp theo</string>
       </property>
       <property name="maximum">
        <number>2000</number>
@@ -250,6 +268,9 @@
         <height>21</height>
        </rect>
       </property>
+      <property name="toolTip">
+       <string>Tọa độ y của tabs bar để full màn </string>
+      </property>
       <property name="maximum">
        <number>2000</number>
       </property>
@@ -262,6 +283,9 @@
         <width>48</width>
         <height>21</height>
        </rect>
+      </property>
+      <property name="toolTip">
+       <string>Tọa độ x của tabs bar để full màn </string>
       </property>
       <property name="maximum">
        <number>2000</number>
@@ -276,6 +300,9 @@
         <height>21</height>
        </rect>
       </property>
+      <property name="toolTip">
+       <string>Khoảng cách tới bot thứ 2</string>
+      </property>
       <property name="maximum">
        <number>2000</number>
       </property>
@@ -289,6 +316,9 @@
         <height>21</height>
        </rect>
       </property>
+      <property name="toolTip">
+       <string>Zoom out x</string>
+      </property>
       <property name="maximum">
        <number>2000</number>
       </property>
@@ -301,6 +331,9 @@
         <width>48</width>
         <height>21</height>
        </rect>
+      </property>
+      <property name="toolTip">
+       <string>Zoom out y</string>
       </property>
       <property name="maximum">
        <number>2000</number>
@@ -341,6 +374,9 @@
         <height>20</height>
        </rect>
       </property>
+      <property name="toolTip">
+       <string>Show nhãn</string>
+      </property>
       <property name="text">
        <string>Show/Hide</string>
       </property>
@@ -356,6 +392,9 @@
         <width>81</width>
         <height>20</height>
        </rect>
+      </property>
+      <property name="toolTip">
+       <string>Tự học hỏi</string>
       </property>
       <property name="text">
        <string>Learning</string>
@@ -381,6 +420,9 @@
         <height>21</height>
        </rect>
       </property>
+      <property name="toolTip">
+       <string>Y-Point full màn</string>
+      </property>
       <property name="maximum">
        <number>2000</number>
       </property>
@@ -393,6 +435,9 @@
         <width>48</width>
         <height>21</height>
        </rect>
+      </property>
+      <property name="toolTip">
+       <string>X-Point full màn</string>
       </property>
       <property name="maximum">
        <number>2000</number>
@@ -420,6 +465,9 @@
         <height>21</height>
        </rect>
       </property>
+      <property name="toolTip">
+       <string>Độ rộng cần chụp</string>
+      </property>
       <property name="maximum">
        <number>2000</number>
       </property>
@@ -432,6 +480,9 @@
         <width>48</width>
         <height>21</height>
        </rect>
+      </property>
+      <property name="toolTip">
+       <string>Độ cao cần chụp</string>
       </property>
       <property name="maximum">
        <number>2000</number>
@@ -472,6 +523,9 @@
         <height>21</height>
        </rect>
       </property>
+      <property name="toolTip">
+       <string>Khoảng cách dọc</string>
+      </property>
       <property name="maximum">
        <number>2000</number>
       </property>
@@ -484,6 +538,9 @@
         <width>48</width>
         <height>21</height>
        </rect>
+      </property>
+      <property name="toolTip">
+       <string>Khoảng cách ngang</string>
       </property>
       <property name="maximum">
        <number>2000</number>
@@ -541,6 +598,9 @@
         <width>21</width>
         <height>31</height>
        </rect>
+      </property>
+      <property name="toolTip">
+       <string>Ping server vì chạy trên AWS</string>
       </property>
       <property name="text">
        <string>P</string>
@@ -608,6 +668,9 @@
         <height>31</height>
        </rect>
       </property>
+      <property name="toolTip">
+       <string/>
+      </property>
       <property name="readOnly">
        <bool>true</bool>
       </property>
@@ -642,11 +705,14 @@
      <widget class="QSpinBox" name="spin_num">
       <property name="geometry">
        <rect>
-        <x>70</x>
+        <x>40</x>
         <y>60</y>
         <width>41</width>
         <height>21</height>
        </rect>
+      </property>
+      <property name="toolTip">
+       <string>Số bot</string>
       </property>
       <property name="minimum">
        <number>1</number>
@@ -658,7 +724,7 @@
      <widget class="QLabel" name="label_19">
       <property name="geometry">
        <rect>
-        <x>40</x>
+        <x>10</x>
         <y>60</y>
         <width>31</width>
         <height>20</height>
@@ -676,14 +742,54 @@
      <widget class="QPushButton" name="btn_train_start">
       <property name="geometry">
        <rect>
-        <x>150</x>
+        <x>160</x>
         <y>60</y>
         <width>21</width>
         <height>21</height>
        </rect>
       </property>
+      <property name="toolTip">
+       <string>Tiến hành train cho nút bắt đầu và kết thúc</string>
+      </property>
+      <property name="toolTipDuration">
+       <number>-1</number>
+      </property>
       <property name="text">
        <string>I</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_20">
+      <property name="geometry">
+       <rect>
+        <x>90</x>
+        <y>60</y>
+        <width>31</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Đơn:</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="chk_chedo_don">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>60</y>
+        <width>21</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="statusTip">
+       <string>Nếu click thì chế độ đấu đơn kể cả với 3 bots</string>
+      </property>
+      <property name="text">
+       <string/>
       </property>
      </widget>
     </widget>
@@ -714,6 +820,9 @@
         <width>31</width>
         <height>41</height>
        </rect>
+      </property>
+      <property name="toolTip">
+       <string>Retrain lại nếu learning kích hoạt</string>
       </property>
       <property name="text">
        <string>T</string>
@@ -764,16 +873,19 @@
       <property name="geometry">
        <rect>
         <x>300</x>
-        <y>9</y>
-        <width>71</width>
-        <height>71</height>
+        <y>20</y>
+        <width>51</width>
+        <height>51</height>
        </rect>
+      </property>
+      <property name="toolTip">
+       <string>Chạy chương trình bằng nhập tay</string>
       </property>
       <property name="styleSheet">
        <string notr="true"/>
       </property>
       <property name="text">
-       <string>Submit</string>
+       <string>Go!</string>
       </property>
      </widget>
      <widget class="QPlainTextEdit" name="txt_ic1">
@@ -845,27 +957,89 @@
      <widget class="QPushButton" name="btn_submit_auto">
       <property name="geometry">
        <rect>
-        <x>380</x>
-        <y>20</y>
-        <width>50</width>
-        <height>50</height>
+        <x>360</x>
+        <y>10</y>
+        <width>43</width>
+        <height>43</height>
        </rect>
       </property>
+      <property name="toolTip">
+       <string>Chơi auto ấn 1 lần</string>
+      </property>
       <property name="styleSheet">
-       <string notr="true"> background-color: #f7f8f9;
+       <string notr="true"> background-color: white;
  border-style: solid;
  border-width:1px;
- border-radius:24px;
+ border-radius:20.5px;
  border-color: gray;
- max-width:48px;
- max-height:48px;
- min-width:48px;
- min-height:48px;
-font-weight:bold;
-</string>
+ max-width:41px;
+ max-height:41px;
+ min-width:41px;
+ min-height:41px;
+font-weight:bold;</string>
       </property>
       <property name="text">
        <string>Auto</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="btn_auto_pause">
+      <property name="geometry">
+       <rect>
+        <x>350</x>
+        <y>50</y>
+        <width>61</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="toolTip">
+       <string>Tạm dừng auto</string>
+      </property>
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <property name="text">
+       <string>pause</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="rd_auto">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>410</x>
+        <y>20</y>
+        <width>21</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="rd_stop">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>410</x>
+        <y>50</y>
+        <width>21</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="checkable">
+       <bool>true</bool>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
       </property>
      </widget>
     </widget>

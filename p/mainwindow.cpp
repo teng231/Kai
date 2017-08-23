@@ -19,11 +19,12 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->spin_x->setValue(cursor().pos().x());
     ui->spin_y->setValue(cursor().pos().y());
     btnMouse=LEFT_BUTTON;
-//    qDebug()<<QDir::currentPath();
-    //
+
     connect(this,SIGNAL(updateResult(int,QStringList)),this,SLOT(update(int,QStringList)));
-    connect(this,SIGNAL(goDone()),this,SLOT(goNext()));
+    connect(this,SIGNAL(goNextSignal()),this,SLOT(goNext()));
+
     configs<<"MainWindow"<<"SaoClub";
+
     for(int i=0;i<configs.size();i++){
         ui->cbb_load->addItem(configs[i]);
     }
@@ -33,8 +34,6 @@ MainWindow::MainWindow(QWidget *parent) :
             this, SLOT(replyFinished(QNetworkReply*)));
 
 
-//    imageRec.loadTrain("/104.png");
-
     readSettings();
     screen=QGuiApplication::primaryScreen();
     CalRender *render=new CalRender(QPoint(ui->spin_card_x->value(),ui->spin_card_y->value()),
@@ -43,7 +42,13 @@ MainWindow::MainWindow(QWidget *parent) :
     btn_lc=render->calBtn(ui->spin_btn->value());
     qDebug()<<this->loca;
 
+    timer=new QTimer(this);
 
+    connect(timer,SIGNAL(timeout()),this,SLOT(doAll()));
+
+
+//    QString str="0b_112.png";
+//    imageRec.loadTrain(str.toStdString());
 }
 
 MainWindow::~MainWindow()
@@ -278,7 +283,7 @@ QList<int> MainWindow::sortControl(QString dvao, QString dra)
         lvao[vt1]=lvao[vt2];lvao[vt2]=temp;
     }
 //    qDebug()<<lvao<<lra;
-    qDebug()<<lc;
+//    qDebug()<<lc;
     return lc;
 }
 
@@ -291,60 +296,58 @@ void MainWindow::saveFile(QPixmap pixmap,  QString name)
 
 void MainWindow::doAll()
 {
-    emptyOld();
-    try {
-        int num=ui->spin_num->value();
-        // tiên hanh zoom
-        int kc=ui->spin_zoom_kc->value();
-        for(int i=0;i<num;i++){
-            mainClick(QPoint(ui->spin_zoom_x->value()+i*kc,ui->spin_zoom_y->value()));
-            // zoom lên
-            mainDoubleClick(QPoint(ui->spin_zoom_x->value()+i*kc,ui->spin_zoom_y->value()));
-            sleep(1);
-            captureCards(i+1);
-            mainDoubleClick(QPoint(ui->spin_zoom_x_2->value(),ui->spin_zoom_y_2->value()));
-        }
-        // đưa dữ liệu vào text f
-        bool getTrain =ui->chk_add_train->isChecked();
-        if(getTrain){
-            QDir recoredDir(QDir::currentPath()+"/temp");
-            QStringList allFiles = recoredDir.entryList(QDir::NoDotAndDotDot | QDir::System | QDir::Hidden  | QDir::AllDirs | QDir::Files, QDir::DirsFirst);//(QDir::Filter::Files,QDir::SortFlag::NoSort)
-            string str="";QStringList lkq;
-            if(allFiles[0]==".DS_Store") allFiles.removeFirst();
-            for(int i=0;i<allFiles.size();i++){
-                string kq=imageRec.loadTrain(QString("/temp/"+allFiles[i]).toStdString());
-                lkq.append(QString::fromStdString(kq));
-                str+=kq;
-            }
-            QString str2=QString::fromStdString(str);
-            if(num==1){
-                ui->txt_ic1->setPlainText(str2.left(26));
-                if(getTrain)rewriteFileName(allFiles,lkq);
-            }
-            else if(num==2){
-                ui->txt_ic1->setPlainText(str2.left(26));
-                ui->txt_ic2->setPlainText(str2.right(26));
-                if(getTrain)rewriteFileName(allFiles,lkq);
-            }
-            else if(num==3){
-                ui->txt_ic1->setPlainText(str2.left(26));
-                ui->txt_ic3->setPlainText(str2.mid(26,26));//xem dòngnày hiện t đang mệt.
-                ui->txt_ic3->setPlainText(str2.right(26));
-                if(getTrain)rewriteFileName(allFiles,lkq);
-            }
-        }
-        sleep(1);
-        emit goDone();
-    } catch (...) {
-        QMessageBox::critical(this,tr("Lỗi chụp màn hình"),tr("Điều chỉnh kích cỡ không đúng.Click check show/hide để điều chỉnh lại")
-                              ,QMessageBox::Cancel);
-    }
+    if(imageRec.loadTrainStart(QGetScreen::GetQImage(screen,QPoint(btn_lc.x()-20,btn_lc.y()-10),70,20))==1){
+        doAcceppt++;
+        if(doAcceppt==2){
+            emptyOld();
+            try {
+                int num=ui->spin_num->value();
+                // tiên hanh zoom
+                int kc=ui->spin_zoom_kc->value();
+                for(int i=0;i<num;i++){
+                    mainClick(QPoint(ui->spin_zoom_x->value()+i*kc,ui->spin_zoom_y->value()));
+                    // zoom lên
+                    mainDoubleClick(QPoint(ui->spin_zoom_x->value()+i*kc,ui->spin_zoom_y->value()));
+                    sleep(1);
+                    captureCards(i+1);
+                    mainDoubleClick(QPoint(ui->spin_zoom_x_2->value(),ui->spin_zoom_y_2->value()));
+                }
+                // đưa dữ liệu vào text f
+                bool getTrain =ui->chk_add_train->isChecked();
+                if(getTrain){
+                    QDir recoredDir(QDir::currentPath()+"/temp");
+                    QStringList allFiles = recoredDir.entryList(QDir::NoDotAndDotDot | QDir::System | QDir::Hidden  | QDir::AllDirs | QDir::Files, QDir::DirsFirst);//(QDir::Filter::Files,QDir::SortFlag::NoSort)
+                    string str="";QStringList lkq;
+                    if(allFiles[0]==".DS_Store") allFiles.removeFirst();
+                    for(int i=0;i<allFiles.size();i++){
+                        string kq=imageRec.loadTrain(QString("/temp/"+allFiles[i]).toStdString());
+                        lkq.append(QString::fromStdString(kq));
+                        str+=kq;
+                    }
+                    QString str2=QString::fromStdString(str);
+                    if(num==1) rewriteFileName(allFiles,lkq);
 
+                    else if(num==2) rewriteFileName(allFiles,lkq);
+
+                    else if(num==3) rewriteFileName(allFiles,lkq);
+                }
+                sleep(1);
+                doAcceppt=0;
+                emit goNextSignal();
+            } catch (...) {
+                QMessageBox::critical(this,tr("Lỗi chụp màn hình"),tr("Điều chỉnh kích cỡ không đúng.Click check show/hide để điều chỉnh lại")
+                                      ,QMessageBox::Cancel);
+            }
+        }
+        else if(doAcceppt==1) return;
+    }
 }
 
 void MainWindow::goNext()
 {
     try {
+
+
         QString cards1=ui->txt_ic1->toPlainText().trimmed(),
                 cards2=ui->txt_ic2->toPlainText().trimmed(),
                 cards3=ui->txt_ic3->toPlainText().trimmed(),
@@ -396,6 +399,16 @@ void MainWindow::goNext()
         // request lên server
         QRegularExpression re("[^rctbajqk0-9]");
         QRegularExpressionMatch match = re.match(cards1.append(cards2).append(cards3));
+
+
+
+
+        // check chế độ chơi
+
+        if(ui->chk_chedo_don->isChecked())// nếu check sẽ la che độ đánh đơn.
+        {
+            server=server.append("&don=true");
+        }
 
         if (!match.hasMatch()) {
             manager->get(QNetworkRequest(QUrl(server)));
@@ -455,7 +468,8 @@ void MainWindow::captureCards(int vt)
                 ,kc_x=ui->spin_rec_kc_x->value()
                 ,kc_y=ui->spin_rec_kc_y->value();
         // tạo point
-        bool ischecked= ui->chk_done->isChecked(),isTrain=ui->chk_add_train->isChecked();
+        bool ischecked= ui->chk_done->isChecked()
+                ,isTrain=ui->chk_add_train->isChecked();
         for(int i=0;i<3;i++){
            temp.append(QPoint(_x+kc_x*i,_y));
         }
@@ -482,7 +496,6 @@ void MainWindow::captureCards(int vt)
                 ui->txt_1_11->setPixmap(QGetScreen::SetToLabel(screen,temp[11],w,h));
                 ui->txt_1_12->setPixmap(QGetScreen::SetToLabel(screen,temp[12],w,h));
             }
-    //        qDebug()<<QString::fromStdString(imageRec.loadTrain(QGetScreen::GetQImage(screen,temp[0],w,h)));
             for(int i=0;i<13;i++){
                if(isTrain)saveFile(QGetScreen::SetToLabel(screen,temp[i],w,h),QString::number(i+1+100)+".png");
                 strl<<QString::fromStdString(imageRec.loadTrain(QGetScreen::GetQImage(screen,temp[i],w,h)));
@@ -626,22 +639,8 @@ void MainWindow::on_btn_train_clicked()
 
 void MainWindow::on_btn_submit_auto_clicked()
 {
-    int res=0;
-
-    while(true){
-        if(imageRec.loadTrainStart(QGetScreen::GetQImage(screen,QPoint(btn_lc.x()-20,btn_lc.y()-10),70,20))==1)
-            res++;
-        else{
-            if(res!=0) res--;
-        }
-        if(res==3){
-            doAll();
-            res=0;
-
-        }
-
-    }
-
+    timer->start(5*1000);
+    if(!ui->rd_auto->isChecked())ui->rd_auto->setChecked(true);
 }
 
 void MainWindow::activateAutoClick()
@@ -664,4 +663,10 @@ void MainWindow::on_btn_train_start_clicked()
                                           QMessageBox::Close);
     } catch (...) {
     }
+}
+
+void MainWindow::on_btn_auto_pause_clicked()
+{
+    timer->stop();
+    if(!ui->rd_stop->isChecked())ui->rd_stop->setChecked(true);
 }

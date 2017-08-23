@@ -43,8 +43,7 @@ HEADERS  += mainwindow.h \
     screen.h \
     calrender.h \
     qgetscreen.h \
-    imagerecognition.h \
-    timer.h
+    imagerecognition.h
 
 FORMS    += mainwindow.ui
 

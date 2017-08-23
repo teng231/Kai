@@ -18,7 +18,6 @@
 
 #define NUMBER "number.yml"
 #define CLASSIFIER "classifier.yml"
-#define SYMBOL "symbol.yml"
 #define PATH "/Users/Te.Nguyen/Code/Kai/p/"
 
 using namespace std;

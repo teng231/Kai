@@ -25,7 +25,6 @@
 #include "microsleep.h"
 #include "calrender.h"
 #include "qgetscreen.h"
-#include "timer.h"
 // custome to recognition image
 #include "imagerecognition.h"
 
@@ -62,10 +61,11 @@ public:
     QPoint btn_lc;
     QScreen *screen;
     ImageRecognition imageRec;
-    Timer t;
-    unsigned long dt = 10; //in seconds
+    //start
+    QTimer *timer;
+    int doAcceppt=0;
 
-    void doAll();
+
     bool kt2(QString str);
     void sapBai(QStringList list,QStringList dvao);
     ~MainWindow();
@@ -79,14 +79,14 @@ public:
     void rewriteFileName(QStringList,QStringList);
 signals:
     void updateResult(int i,QStringList list);
-    void goDone();
+    void goNextSignal();
 private slots:
     void on_btn_submit_clicked();
     void replyFinished(QNetworkReply*);
     void on_btn_ping_clicked();
     void update(int i,QStringList list);
     void on_btn_train_clicked();
-
+    void doAll();
 
     void goNext();
     void on_btn_submit_auto_clicked();
@@ -96,6 +96,8 @@ private slots:
     void on_btn_load_config_clicked();
 
     void on_btn_train_start_clicked();
+
+    void on_btn_auto_pause_clicked();
 
 private:
     Ui::MainWindow *ui;
