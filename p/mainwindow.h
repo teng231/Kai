@@ -65,7 +65,7 @@ public:
     QTimer *timer;
     int doAcceppt=0;
 
-
+    int kiemThu();
     bool kt2(QString str);
     void sapBai(QStringList list,QStringList dvao);
     ~MainWindow();

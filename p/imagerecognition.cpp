@@ -134,7 +134,9 @@ int ImageRecognition::loadTrainStart(QImage src)
       cv::Mat imgMat=QImageToCvMat(src);
       cv::cvtColor(imgMat, imgMat, CV_BGR2GRAY);
       resize(imgMat,imgMat,Size(70,20));
+
       // convert 2d to 1d
+//      imshow("",imgMat);//5t4r3r9b8t6r5c5rarqbjc9c9t
       cv::Mat testMat = imgMat.clone().reshape(1,1);
       testMat.convertTo(testMat, CV_32F);
 

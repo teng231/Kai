@@ -36,16 +36,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     readSettings();
     screen=QGuiApplication::primaryScreen();
-    CalRender *render=new CalRender(QPoint(ui->spin_card_x->value(),ui->spin_card_y->value()),
-                                    ui->spin_next->value(),ui->spin_under->value());
-    loca=render->calAll();
-    btn_lc=render->calBtn(ui->spin_btn->value());
-    qDebug()<<this->loca;
-
     timer=new QTimer(this);
 
     connect(timer,SIGNAL(timeout()),this,SLOT(doAll()));
-
 
 //    QString str="0b_112.png";
 //    imageRec.loadTrain(str.toStdString());
@@ -112,6 +105,12 @@ void MainWindow::readSettings()
     ui->spin_rec_kc_y->setValue(settings.value("rect_kc_y").toInt());
 
     settings.endGroup();
+
+    CalRender *render=new CalRender(QPoint(ui->spin_card_x->value(),ui->spin_card_y->value()),
+                                    ui->spin_next->value(),ui->spin_under->value());
+    loca=render->calAll();
+    btn_lc=render->calBtn(ui->spin_btn->value());
+    qDebug()<<this->loca;
 }
 void MainWindow::closeEvent(QCloseEvent *event)
 {
@@ -282,8 +281,6 @@ QList<int> MainWindow::sortControl(QString dvao, QString dra)
         QString temp=lvao[vt1];
         lvao[vt1]=lvao[vt2];lvao[vt2]=temp;
     }
-//    qDebug()<<lvao<<lra;
-//    qDebug()<<lc;
     return lc;
 }
 
@@ -294,11 +291,26 @@ void MainWindow::saveFile(QPixmap pixmap,  QString name)
     pixmap.save(&file, "PNG");
 }
 
+int MainWindow::kiemThu()
+{
+    int next=ui->spin_next->value(),btn=ui->spin_btn->value();
+    QDateTime time=QDateTime::currentDateTime();
+    if(ui->chk_get_Image_toTrain->isChecked())
+        saveFile(QGetScreen::SetToLabel(
+                    screen,QPoint(btn_lc.x()-next,btn_lc.y()-btn)
+                                 ,70,20)
+                                 ,time.toString()+".png");
+    return imageRec.loadTrainStart(QGetScreen::GetQImage(
+                                       screen,QPoint(btn_lc.x()-next
+                                                    ,btn_lc.y()-btn)
+                                                    ,70,20));
+}
+
 void MainWindow::doAll()
 {
-    if(imageRec.loadTrainStart(QGetScreen::GetQImage(screen,QPoint(btn_lc.x()-20,btn_lc.y()-10),70,20))==1){
+    if(kiemThu()==1){
         doAcceppt++;
-        if(doAcceppt==2){
+        if(doAcceppt>2){
             emptyOld();
             try {
                 int num=ui->spin_num->value();
@@ -331,7 +343,7 @@ void MainWindow::doAll()
 
                     else if(num==3) rewriteFileName(allFiles,lkq);
                 }
-                sleep(1);
+//                sleep(1);
                 doAcceppt=0;
                 emit goNextSignal();
             } catch (...) {
@@ -569,10 +581,18 @@ void MainWindow::replyFinished(QNetworkReply*reply){
         QString data=(QString) reply->readAll();
         ui->txt_kq_server->setPlainText(data);
         QStringList list=data.trimmed().split("\r\n");
+
         if(list.join("")=="Error: NGoại lệ của server báo Tể - code 500"){
             emptyOld();
             return;
         }
+
+        if(list.join("")=="Error:Bài nhập vào ko đúng - Không tạo đủ 13 quân bài enemy - code: 503"){
+            doAcceppt=1;
+            doAll();
+            return;
+        }
+
         int len=list.size();
         QStringList dvao;
         if(len==3){

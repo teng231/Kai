@@ -234,6 +234,9 @@
       <property name="toolTip">
        <string>Tọa độ y bonus của nút So Chi</string>
       </property>
+      <property name="minimum">
+       <number>-50</number>
+      </property>
       <property name="maximum">
        <number>2000</number>
       </property>
@@ -742,7 +745,7 @@
      <widget class="QPushButton" name="btn_train_start">
       <property name="geometry">
        <rect>
-        <x>160</x>
+        <x>150</x>
         <y>60</y>
         <width>21</width>
         <height>21</height>
@@ -787,6 +790,22 @@
       </property>
       <property name="statusTip">
        <string>Nếu click thì chế độ đấu đơn kể cả với 3 bots</string>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="chk_get_Image_toTrain">
+      <property name="geometry">
+       <rect>
+        <x>170</x>
+        <y>60</y>
+        <width>31</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="statusTip">
+       <string>Chụp ảnh</string>
       </property>
       <property name="text">
        <string/>

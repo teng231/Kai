@@ -35,7 +35,7 @@ QList<QPoint> CalRender::calAll()
 
 QPoint CalRender::calBtn(int btn)
 {
-    return QPoint(this->p.x()+this->next*5+6*4,this->p.y()+this->under*2+btn);
+    return QPoint(this->p.x()+this->next*6,this->p.y()+this->under*2+btn);
 }
 
 
