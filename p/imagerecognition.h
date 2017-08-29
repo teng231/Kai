@@ -17,7 +17,11 @@
 #include <QImage>
 
 #define NUMBER "number.yml"
+#define SYMBOL "symbol.yml"
+#define SIZE_WIDTH 24
+#define SIZE_HEIGHT 40
 #define CLASSIFIER "classifier.yml"
+#define START "start.yml"
 #define PATH "/Users/Te.Nguyen/Code/Kai/p/"
 
 using namespace std;
@@ -26,18 +30,17 @@ using namespace cv::ml;
 
 class ImageRecognition{
     public:class
-        cv::Ptr<cv::ml::SVM> svm,svm2;
-        string main="classifier.yml";
-        string start="start.yml";
+        cv::Ptr<cv::ml::SVM> svm,svm_start;
         int num;
         ImageRecognition();
         static void getTrain(QString);
         int train(QString dir,string saveFile,int area);
-        string loadTrain(string);
+
+        string loadTrain(string,int w,int h);
 
         int loadTrainStart(QImage src);
 
-        string loadTrain(QImage src);
+        string loadTrain(QImage src,int w,int h);
         string getResult();
         cv::Mat QImageToCvMat(QImage);
 };

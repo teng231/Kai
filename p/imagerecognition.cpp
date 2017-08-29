@@ -12,24 +12,27 @@ std::vector<std::string> trainingFilenames;
 ImageRecognition::ImageRecognition()
 {
     // Load SVM classifier
-    svm = cv::ml::StatModel::load<cv::ml::SVM>(main);//svm2
-    svm2 = cv::ml::StatModel::load<cv::ml::SVM>(start);//svm2
+    svm = cv::ml::StatModel::load<cv::ml::SVM>(CLASSIFIER);
+    svm_start = cv::ml::StatModel::load<cv::ml::SVM>(START);//svm2
 }
 
 /// Lấy dữ liệu cho việc train
 void ImageRecognition::getTrain(QString dir)
 {
+    labels.clear();
+    trainingFilenames.clear();
+
     QDir recoredDir(dir);
     QStringList allFiles = recoredDir.entryList(QDir::NoDotAndDotDot | QDir::System | QDir::Hidden  | QDir::AllDirs | QDir::Files, QDir::DirsFirst);//(QDir::Filter::Files,QDir::SortFlag::NoSort)
-    int key=0;
+    int key=0,lbl_size=0;
     vector<string> labels2;
     if(allFiles[0]==".DS_Store") allFiles.removeFirst();
     for(int i=0;i<allFiles.size();i++) {
       trainingFilenames.push_back(allFiles[i].toStdString());
       labels2.push_back(allFiles[i].left(2).toStdString());
     }
-
-    for(int index=0; index<labels2.size(); index++)
+    lbl_size = labels2.size();
+    for(int index=0; index<lbl_size; index++)
     {
         labels.push_back(key);
         if(labels2[index+1]!=labels2[index])
@@ -40,14 +43,13 @@ void ImageRecognition::getTrain(QString dir)
 
 /// tiến hànhtrain
 ///
-int ImageRecognition::train(QString dir,string fileSave,int imgArea= 24*40)
+int ImageRecognition::train(QString dir,string fileSave,int imgArea)
 {
     getTrain(QString(PATH)+dir);
-
     cv::Mat trainingMat(labels.size(), imgArea, CV_32FC1);
-
+    int len_size=trainingFilenames.size(),lbl_size=labels.size();
     // loop over training files
-    for(int index=0; index<trainingFilenames.size(); index++)
+    for(int index=0; index<len_size; index++)
     {
         // output on which file we are training
         std::cout << "Analyzing label -> file: " <<  labels[index] << "|" <<  trainingFilenames[index] << std::endl;
@@ -66,10 +68,10 @@ int ImageRecognition::train(QString dir,string fileSave,int imgArea= 24*40)
     }
 
 
-    int labelsArray[labels.size()];
+    int labelsArray[lbl_size];
 
     // loop over labels
-    for(int index=0; index<labels.size(); index++)
+    for(int index=0; index<lbl_size; index++)
     {
         labelsArray[index] = labels[index];
     }
@@ -102,15 +104,21 @@ int ImageRecognition::train(QString dir,string fileSave,int imgArea= 24*40)
 
 /// load dữ liệu train
 
-string ImageRecognition::loadTrain(string name)
+string ImageRecognition::loadTrain(string name,int w,int h)
 {
     try{
 
         // read image file (grayscale)
-        cv::Mat imgMat = cv::imread(QDir::currentPath().toStdString()+name,0);
-        resize(imgMat,imgMat,Size(24,40));
-        imshow("hello",imgMat);
+        string t=QDir::currentPath().toStdString()+name;
+
+        cv::Mat imgMat = cv::imread(QDir::currentPath().toStdString()+"/"+name,0);
+        imshow("",imgMat);
+        resize(imgMat,imgMat,Size(w,h));
+
         // convert 2d to 1d
+
+//        Mat value=imgMat.rowRange(0,21)
+//                ,symbol=imgMat.rowRange(21,40);
 
         cv::Mat testMat = imgMat.clone().reshape(1,1);
         testMat.convertTo(testMat, CV_32F);
@@ -118,9 +126,6 @@ string ImageRecognition::loadTrain(string name)
         // try to predict which number has been drawn
 
             num = svm->predict(testMat);
-
-//            std::cout << std::endl  << "Recognizing following number -> " << getResult() << std::endl << std::endl;
-
             return getResult();
 
         }catch(cv::Exception ex){
@@ -134,7 +139,6 @@ int ImageRecognition::loadTrainStart(QImage src)
       cv::Mat imgMat=QImageToCvMat(src);
       cv::cvtColor(imgMat, imgMat, CV_BGR2GRAY);
       resize(imgMat,imgMat,Size(70,20));
-
       // convert 2d to 1d
 //      imshow("",imgMat);//5t4r3r9b8t6r5c5rarqbjc9c9t
       cv::Mat testMat = imgMat.clone().reshape(1,1);
@@ -142,8 +146,9 @@ int ImageRecognition::loadTrainStart(QImage src)
 
 
       // try to predict which number has been drawn
+//          return 1;
+          return num = svm_start->predict(testMat);
 
-          return num = svm2->predict(testMat);
 
   //            std::cout << std::endl  << "Recognizing following number -> " << getResult() << std::endl << std::endl;
 
@@ -152,12 +157,12 @@ int ImageRecognition::loadTrainStart(QImage src)
   }
 }
 
-string ImageRecognition::loadTrain(QImage src)
+string ImageRecognition::loadTrain(QImage src,int w,int h)
 {
       try{
         cv::Mat imgMat=QImageToCvMat(src);
         cv::cvtColor(imgMat, imgMat, CV_BGR2GRAY);
-        resize(imgMat,imgMat,Size(24,40));
+        resize(imgMat,imgMat,Size(w,h));
         // convert 2d to 1d
         cv::Mat testMat = imgMat.clone().reshape(1,1);
         testMat.convertTo(testMat, CV_32F);

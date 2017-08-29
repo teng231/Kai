@@ -71,11 +71,12 @@ public:
     ~MainWindow();
 
 
-    void readSettings();
+    void readSettings(QString str);
     void closeEvent(QCloseEvent *event) override;
     void writeSettings();
 
     void captureCards(int );
+
     void rewriteFileName(QStringList,QStringList);
 signals:
     void updateResult(int i,QStringList list);
@@ -93,11 +94,15 @@ private slots:
 
     void activateAutoClick();
 
-    void on_btn_load_config_clicked();
-
     void on_btn_train_start_clicked();
 
     void on_btn_auto_pause_clicked();
+
+    void on_cbb_load_currentTextChanged(const QString &arg1);
+
+    void on_btn_add_config_clicked();
+
+    void on_btn_add_config_2_clicked();
 
 private:
     Ui::MainWindow *ui;
