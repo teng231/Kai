@@ -31,7 +31,10 @@ SOURCES += main.cpp \
     screen.c \
     calrender.cpp \
     qgetscreen.cpp \
-    imagerecognition.cpp
+    imagerecognition.cpp \
+    mouseq.cpp \
+    validations.cpp \
+    workfile.cpp
 
 HEADERS  += mainwindow.h \
     mouse.h \
@@ -43,7 +46,10 @@ HEADERS  += mainwindow.h \
     screen.h \
     calrender.h \
     qgetscreen.h \
-    imagerecognition.h
+    imagerecognition.h \
+    mouseq.h \
+    validations.h \
+    workfile.h
 
 FORMS    += mainwindow.ui
 
@@ -60,12 +66,11 @@ LIBS += -L/usr/local/lib/
 # See cautionary note below
 LIBS += -framework ApplicationServices
 
-RC_FILE = app.rc
 LIBS+= -dead_strip
 DISTFILES += \
     classifier.yml \
     start.yml \
-    app.rc \
-    icon.ico
+    number.yml \
+    symbol.yml
 
 

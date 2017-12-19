@@ -1,11 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#define r "♦"
-#define c "♥"
-#define b "♠"
-#define te "♣"
-
-
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -16,9 +10,9 @@ MainWindow::MainWindow(QWidget *parent) :
     move(0,0);
     ui->txt_ic1->setFocusPolicy(Qt::StrongFocus);
     ui->txt_ic1->setFocus();
+
     ui->spin_x->setValue(cursor().pos().x());
     ui->spin_y->setValue(cursor().pos().y());
-    btnMouse=LEFT_BUTTON;
 
     connect(this,SIGNAL(updateResult(int,QStringList)),this,SLOT(update(int,QStringList)));
     connect(this,SIGNAL(goNextSignal()),this,SLOT(goNext()));
@@ -33,13 +27,14 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(manager, SIGNAL(finished(QNetworkReply*)),
             this, SLOT(replyFinished(QNetworkReply*)));
 
-
-//    readSettings(ui->cbb_load->currentText());
     screen=QGuiApplication::primaryScreen();
     timer=new QTimer(this);
 
     connect(timer,SIGNAL(timeout()),this,SLOT(doAll()));
-//    qDebug()<<QString::fromStdString(imageRec.loadTrain("0t_Tue.png",20,51));
+
+//    string str=imageRec.loadTrain("0b_8.jpg",24,40);//0b0113.png
+//    string str=imageRec.loadTrain("0b0113.png",24,40);//0b0113.png
+//    qDebug()<<QString::fromStdString(str);
 }
 
 MainWindow::~MainWindow()
@@ -64,8 +59,6 @@ void MainWindow::writeSettings()
     settings.setValue("zoom_x_out", ui->spin_zoom_x_2->value());
     settings.setValue("zoom_y_out", ui->spin_zoom_y_2->value());
     settings.setValue("zoom_kc", ui->spin_zoom_kc->value());
-
-//    settings.setValue("num", ui->spin_num->value());
 
     settings.setValue("rect_px", ui->spin_rec_x->value());
     settings.setValue("rect_py", ui->spin_rec_y->value());
@@ -95,7 +88,6 @@ void MainWindow::readSettings(QString str)
     ui->spin_zoom_x_2->setValue(settings.value("zoom_x_out").toInt());
     ui->spin_zoom_y_2->setValue(settings.value("zoom_y_out").toInt());
     ui->spin_zoom_kc->setValue(settings.value("zoom_kc").toInt());
-//    ui->spin_num->setValue(settings.value("num").toInt());
     ui->spin_rec_x->setValue(settings.value("rect_px").toInt());
     ui->spin_rec_y->setValue(settings.value("rect_py").toInt());
     ui->spin_rec_h->setValue(settings.value("rect_h").toInt());
@@ -107,10 +99,10 @@ void MainWindow::readSettings(QString str)
 
     CalRender *render=new CalRender(QPoint(ui->spin_card_x->value(),ui->spin_card_y->value()),
                                     ui->spin_next->value(),ui->spin_under->value());
-    loca=render->calAll();
+    startPoint=render->calAll();
     btn_lc=QPoint(ui->spin_btn->value(),ui->spin_btn_2->value());//16
-    qDebug()<<btn_lc;
-    qDebug()<<this->loca;
+//    qDebug()<<btn_lc;
+    qDebug()<<this->startPoint;
 }
 void MainWindow::closeEvent(QCloseEvent *event)
 {
@@ -127,20 +119,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
     } else {
         event->ignore();
     }
-}
-
-
-
-bool MainWindow::kiemTra(QString str){
-    return str.isEmpty();
-}
-QString MainWindow::dinhDang(QString str){
-    QString t1,t2,t3;
-    t1=str.left(6).replace("r",r).replace("c",c).replace("b",b).replace("t",te);
-    t2=str.mid(6,10).replace("r",r).replace("c",c).replace("b",b).replace("t",te);
-    t3=str.right(10).replace("r",r).replace("c",c).replace("b",b).replace("t",te);
-//    qDebug()<<t1<<t2<<t3;
-    return t1.append("\n").append(t2).append("\n").append(t3);
 }
 
 void MainWindow::emptyOld()
@@ -168,134 +146,11 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)
     ui->spin_y->setValue(_y);
 }
 
-void MainWindow::mainClick(QPoint p)
-{
-    MMPoint point;
-    point.x=p.x();
-    point.y=p.y();
-    smoothlyMoveMouse(point);
-    microsleep(10);
-    clickMouse(btnMouse);
-    microsleep(10);
-}
-
-void MainWindow::mainDoubleClick(QPoint p)
-{
-    MMPoint point;
-    point.x=p.x();
-    point.y=p.y();
-    moveMouse(point);
-    microsleep(10);doubleClick(btnMouse);microsleep(10);
-}
-
-void MainWindow::mainDrag(QPoint beg, QPoint end)
-{
-    MMPoint point;
-    point.x=beg.x();
-    point.y=beg.y();
-    MMPoint point2;
-    point2.x=end.x();
-    point2.y=end.y();
-//    smoothlyMoveMouse(point);
-    moveMouse(point);
-    microsleep(100);
-    toggleMouse(true,btnMouse);
-    microsleep(100);
-    dragMouse(point2,btnMouse);
-    microsleep(100);
-    toggleMouse(false,btnMouse);
-    microsleep(100);
-}
-
-void MainWindow::mainMove(QPoint p)
-{
-    MMPoint point;
-    point.x=p.x();
-    point.y=p.y();
-    smoothlyMoveMouse(point);
-    microsleep(10);
-}
-
-
-QStringList MainWindow::phanManh(QString str)
-{
-    QStringList li;
-    for(int i=0;i<13;i++){
-       QString item=str.left(2);
-       li<<item;
-       str.remove(0,2);
-    }
-    return li;
-}
-
-int MainWindow::layVt(QStringList li, QString str)
-{
-    for(int i=0;i<13;i++){
-        if(li[i]==str) {
-            return i;
-        }
-    }
-    return -99;
-}
-
-QList<int> MainWindow::sortControl(QString dvao, QString dra)
-{
-//    qDebug()<<dvao<<dra;
-    QStringList lvao=phanManh(dvao),lra=phanManh(dra);
-    QList<int> lc;
-//    qDebug()<<lvao<<lra;
-    // Xét tính trạng 3 chi 3
-   QStringList tl1,tl2={lra[0],lra[1],lra[2]};
-   for(int i=0;i<3;i++){
-       bool ok=false;
-        for(int j=0;j<3;j++){
-           if(lvao[i]==lra[j]){ok=true;tl2.removeAt(tl2.indexOf(lvao[i]));break;}
-        }
-        if(!ok){tl1.append(lvao[i]);}
-//         qDebug()<<tl1<<tl2;
-   }
-   for(int i=0;i<tl2.size();i++){
-       int vt1=lvao.indexOf(tl1[i]),vt2=lvao.indexOf(tl2[i]);
-       lc<<vt1<<vt2;
-       QString temp=lvao[vt1];
-       lvao[vt1]=lvao[vt2];lvao[vt2]=temp;
-   }
-//    qDebug()<<lvao;
-
-   QStringList tl12,tl22={lra[3],lra[4],lra[5],lra[6],lra[7]};
-//     Xét tinh trạng 5 chi giữa
-    for(int i=3;i<8;i++){
-        bool tim=false;
-        for(int j=3;j<8;j++){
-            if(lvao[i]==lra[j]){
-                tim=true;tl22.removeAt(tl22.indexOf(lvao[i]));break;
-            }
-        }
-        if(!tim){tl12.append(lvao[i]);}
-    }
-    // Xét tính trạng 5 chi đầu
-
-    for(int i=0;i<tl22.size();i++){
-        int vt1=lvao.indexOf(tl12[i]),vt2=lvao.indexOf(tl22[i]);
-        lc<<vt1<<vt2;
-        QString temp=lvao[vt1];
-        lvao[vt1]=lvao[vt2];lvao[vt2]=temp;
-    }
-    return lc;
-}
-
-void MainWindow::saveFile(QPixmap pixmap,  QString name)
-{
-    QFile file("temp/"+name);
-    file.open(QIODevice::WriteOnly);
-    pixmap.save(&file, "PNG");
-}
-
 int MainWindow::kiemThu()
 {
     QDateTime time=QDateTime::currentDateTime();
     if(ui->chk_get_Image_toTrain->isChecked())
-        saveFile(QGetScreen::SetToLabel(
+        wf->saveFile(QGetScreen::SetToLabel(
                     screen,QPoint(btn_lc.x(),btn_lc.y())
                                  ,70,20)
                                  ,time.toString()+".png");
@@ -316,12 +171,12 @@ void MainWindow::doAll()
                 // tiên hanh zoom
                 int kc=ui->spin_zoom_kc->value();
                 for(int i=0;i<num;i++){
-                    mainClick(QPoint(ui->spin_zoom_x->value()+i*kc,ui->spin_zoom_y->value()));
+                    mq.mainClick(QPoint(ui->spin_zoom_x->value()+i*kc,ui->spin_zoom_y->value()));
                     // zoom lên
-                    mainDoubleClick(QPoint(ui->spin_zoom_x->value()+i*kc,ui->spin_zoom_y->value()));
+                    mq.mainDoubleClick(QPoint(ui->spin_zoom_x->value()+i*kc,ui->spin_zoom_y->value()));
                     sleep(1);
                     captureCards(i+1);
-                    mainDoubleClick(QPoint(ui->spin_zoom_x_2->value(),ui->spin_zoom_y_2->value()));
+                    mq.mainDoubleClick(QPoint(ui->spin_zoom_x_2->value(),ui->spin_zoom_y_2->value()));
                 }
                 bool getTrain =ui->chk_add_train->isChecked();
                 if(getTrain){
@@ -346,11 +201,11 @@ void MainWindow::doAll()
                            lkq<<str2.mid(i,2);
                     }
 
-                    if(num==1) rewriteFileName(allFiles,lkq);
+                    if(num==1) wf->rewriteFileName(allFiles,lkq);
 
-                    else if(num==2) rewriteFileName(allFiles,lkq);
+                    else if(num==2) wf->rewriteFileName(allFiles,lkq);
 
-                    else if(num==3) rewriteFileName(allFiles,lkq);
+                    else if(num==3) wf->rewriteFileName(allFiles,lkq);
                 }
                 // đưa dữ liệu vào text f
 //                trainer();
@@ -374,8 +229,8 @@ void MainWindow::goNext()
                 cards3=ui->txt_ic3->toPlainText().trimmed(),
                 server=ui->txt_server->text().append("?");
 
-        if(!kiemTra(cards1)) {
-            if(kt2(cards1))
+        if(!validate.kiemTra(cards1)) {
+            if(validate.kt2(cards1))
             {
                 server=server.append("cards1=").append(cards1).append('&');
                 //  capture
@@ -389,8 +244,8 @@ void MainWindow::goNext()
             }
         }
 
-        if(!kiemTra(cards2)) {
-            if(kt2(cards2))
+        if(!validate.kiemTra(cards2)) {
+            if(validate.kt2(cards2))
             {
                 server=server.append("cards2=").append(cards2).append('&');
 
@@ -403,8 +258,8 @@ void MainWindow::goNext()
             }
         }
 
-        if(!kiemTra(cards3)) {
-            if(kt2(cards3))
+        if(!validate.kiemTra(cards3)) {
+            if(validate.kt2(cards3))
             {
                 server=server.append("cards3=").append(cards3).append('&');
 
@@ -440,12 +295,6 @@ void MainWindow::goNext()
     }
 }
 
-bool MainWindow::kt2(QString str)
-{
-    str=str.replace("\r\n|\n| ","");
-    if(str.length()!=26) {return false;}
-    return true;
-}
 
 void MainWindow::sapBai(QStringList list, QStringList dvao)
 {
@@ -455,14 +304,14 @@ void MainWindow::sapBai(QStringList list, QStringList dvao)
             for(int i=0;i<list.length();i++)
             {
                 // Lấy các hoán vị
-                QList<int> ls=sortControl(dvao[i],list[i]);
+                QList<int> ls= validate.sortControl(dvao[i],list[i]);
                 // khoi dong ct
-                mainClick(QPoint(loca[0].x()+i*kc,loca[0].y()));
+                mq.mainClick(QPoint(startPoint[0].x()+i*kc,startPoint[0].y()));
                 for(int j=0;j<ls.size();j+=2){
-                    mainDrag(QPoint(loca[ls[j]].x()+i*kc,loca[ls[j]].y()) ,QPoint(loca[ls[j+1]].x()+i*kc,loca[ls[j+1]].y()));
+                    mq.mainDrag(QPoint(startPoint[ls[j]].x()+i*kc,startPoint[ls[j]].y()) ,QPoint(startPoint[ls[j+1]].x()+i*kc,startPoint[ls[j+1]].y()));
                 }
                  //so chi click
-                mainClick(QPoint(btn_lc.x()+kc*i,btn_lc.y()));
+                mq.mainClick(QPoint(btn_lc.x()+8,btn_lc.y()+8));
 
             }
 
@@ -514,7 +363,7 @@ void MainWindow::captureCards(int vt)
                 ui->txt_1_12->setPixmap(QGetScreen::SetToLabel(screen,temp[12],w,h));
             }
             for(int i=0;i<13;i++){
-               if(isTrain)saveFile(QGetScreen::SetToLabel(screen,temp[i],w,h),QString::number(i+1+100)+".png");
+               if(isTrain)wf->saveFile(QGetScreen::SetToLabel(screen,temp[i],w,h),QString::number(i+1+100)+".png");
                 strl<<QString::fromStdString(imageRec.loadTrain(QGetScreen::GetQImage(screen,temp[i],w,h),w,h));
             }
             if(!isTrain) ui->txt_ic1->setPlainText(strl.join(""));
@@ -536,7 +385,7 @@ void MainWindow::captureCards(int vt)
                     ui->txt_2_12->setPixmap(QGetScreen::SetToLabel(screen,temp[12],w,h));
                 }
                 for(int i=0;i<13;i++){
-                    if(isTrain)saveFile(QGetScreen::SetToLabel(screen,temp[i],w,h),QString::number(i+1+200)+".png");
+                    if(isTrain)wf->saveFile(QGetScreen::SetToLabel(screen,temp[i],w,h),QString::number(i+1+200)+".png");
                     strl<<QString::fromStdString(imageRec.loadTrain(QGetScreen::GetQImage(screen,temp[i],w,h),w,h));
                 }
                 if(!isTrain) ui->txt_ic2->setPlainText(strl.join(""));
@@ -558,7 +407,7 @@ void MainWindow::captureCards(int vt)
                     ui->txt_3_12->setPixmap(QGetScreen::SetToLabel(screen,temp[12],w,h));
                 }
                 for(int i=0;i<13;i++){
-                       if(isTrain)saveFile(QGetScreen::SetToLabel(screen,temp[i],w,h),QString::number(i+1+300)+".png");
+                       if(isTrain)wf->saveFile(QGetScreen::SetToLabel(screen,temp[i],w,h),QString::number(i+1+300)+".png");
                       strl<<QString::fromStdString(imageRec.loadTrain(QGetScreen::GetQImage(screen,temp[i],w,h),w,h));
                 }
                if(!isTrain)  ui->txt_ic3->setPlainText(strl.join(""));
@@ -566,15 +415,6 @@ void MainWindow::captureCards(int vt)
     } catch (...) {
         return;
     }
-}
-
-void MainWindow::rewriteFileName(QStringList ltep, QStringList llabel)
-{
-      for(int i=0;i<llabel.size();i++){
-          QDateTime time=QDateTime::currentDateTime();
-//          qDebug()<<d.toString();
-          QFile::copy(QDir::currentPath()+"/temp/"+ltep[i],QDir::currentPath()+"/retrain/"+llabel[i]+"_"+time.toString()+".png");
-      }
 }
 
 void MainWindow::on_btn_submit_clicked()
@@ -634,16 +474,16 @@ void MainWindow::update(int i, QStringList list)
 {
     try {
         if(i==3){
-            ui->txt_oc1->setPlainText(dinhDang(list[0]));
-            ui->txt_oc2->setPlainText(dinhDang(list[1]));
-            ui->txt_oc3->setPlainText(dinhDang(list[2]));
+            ui->txt_oc1->setPlainText(validate.dinhDang(list[0]));
+            ui->txt_oc2->setPlainText(validate.dinhDang(list[1]));
+            ui->txt_oc3->setPlainText(validate.dinhDang(list[2]));
         }
         if(i==2){
-            ui->txt_oc1->setPlainText(dinhDang(list[0]));
-            ui->txt_oc2->setPlainText(dinhDang(list[1]));
+            ui->txt_oc1->setPlainText(validate.dinhDang(list[0]));
+            ui->txt_oc2->setPlainText(validate.dinhDang(list[1]));
         }
         if(i==1){
-            ui->txt_oc1->setPlainText(dinhDang(list[0]));
+            ui->txt_oc1->setPlainText(validate.dinhDang(list[0]));
         }
     } catch (...) {
         return;
@@ -653,12 +493,17 @@ void MainWindow::update(int i, QStringList list)
 void MainWindow::on_btn_train_clicked()
 {
     try {
-        QString fileName="classifier.yml";
 
-        int iii=imageRec.train("Raw",fileName.toStdString(),ui->spin_rec_w->value()*ui->spin_rec_h->value());
+        imageRec.trainAll(ui->spin_rec_w->value(),ui->spin_rec_h->value());
         QMessageBox::critical(this, tr("Cảnh báo"),
-                                          ("Đã retrain file updated classifier.yml model="+QString::number(iii)),
+                                          ("Đã retrain file updated classifier start number symbol model"),
                                           QMessageBox::Close);
+
+
+        imageRec.trainAll(ui->spin_rec_w->value(),ui->spin_rec_h->value());
+
+
+
     } catch (...) {
     }
 }
@@ -671,20 +516,7 @@ void MainWindow::on_btn_submit_auto_clicked()
 
 void MainWindow::activateAutoClick()
 {
-    mainClick((QPoint(629,128)));
-}
-
-
-void MainWindow::on_btn_train_start_clicked()
-{
-    try {
-        QString fileName="start.yml";
-        int iii=imageRec.train("start",fileName.toStdString(),70*20);
-        QMessageBox::critical(this, tr("Cảnh báo"),
-                                          ("Đã retrain file updated start.yml model="+QString::number(iii)),
-                                          QMessageBox::Close);
-    } catch (...) {
-    }
+    mq.mainClick((QPoint(629,128)));
 }
 
 void MainWindow::on_btn_auto_pause_clicked()

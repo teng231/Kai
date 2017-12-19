@@ -55,7 +55,10 @@ SOURCES       = ../p/main.cpp \
 		../p/screen.c \
 		../p/calrender.cpp \
 		../p/qgetscreen.cpp \
-		../p/imagerecognition.cpp moc_mainwindow.cpp
+		../p/imagerecognition.cpp \
+		../p/mouseq.cpp \
+		../p/validations.cpp \
+		../p/workfile.cpp moc_mainwindow.cpp
 OBJECTS       = main.o \
 		mainwindow.o \
 		mouse.o \
@@ -64,11 +67,14 @@ OBJECTS       = main.o \
 		calrender.o \
 		qgetscreen.o \
 		imagerecognition.o \
+		mouseq.o \
+		validations.o \
+		workfile.o \
 		moc_mainwindow.o
 DIST          = ../p/classifier.yml \
 		../p/start.yml \
-		../p/app.rc \
-		../p/icon.ico \
+		../p/number.yml \
+		../p/symbol.yml \
 		../../../Qt5.8.0/5.8/clang_64/mkspecs/features/spec_pre.prf \
 		../../../Qt5.8.0/5.8/clang_64/mkspecs/qdevice.pri \
 		../../../Qt5.8.0/5.8/clang_64/mkspecs/features/device_config.prf \
@@ -255,14 +261,20 @@ DIST          = ../p/classifier.yml \
 		../p/screen.h \
 		../p/calrender.h \
 		../p/qgetscreen.h \
-		../p/imagerecognition.h ../p/main.cpp \
+		../p/imagerecognition.h \
+		../p/mouseq.h \
+		../p/validations.h \
+		../p/workfile.h ../p/main.cpp \
 		../p/mainwindow.cpp \
 		../p/mouse.c \
 		../p/deadbeef_rand.c \
 		../p/screen.c \
 		../p/calrender.cpp \
 		../p/qgetscreen.cpp \
-		../p/imagerecognition.cpp
+		../p/imagerecognition.cpp \
+		../p/mouseq.cpp \
+		../p/validations.cpp \
+		../p/workfile.cpp
 QMAKE_TARGET  = Kai
 DESTDIR       = 
 TARGET        = Kai
@@ -652,8 +664,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents ../../../Qt5.8.0/5.8/clang_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../p/mainwindow.h ../p/mouse.h ../p/os.h ../p/types.h ../p/inline_keywords.h ../p/microsleep.h ../p/deadbeef_rand.h ../p/screen.h ../p/calrender.h ../p/qgetscreen.h ../p/imagerecognition.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../p/main.cpp ../p/mainwindow.cpp ../p/mouse.c ../p/deadbeef_rand.c ../p/screen.c ../p/calrender.cpp ../p/qgetscreen.cpp ../p/imagerecognition.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../p/mainwindow.h ../p/mouse.h ../p/os.h ../p/types.h ../p/inline_keywords.h ../p/microsleep.h ../p/deadbeef_rand.h ../p/screen.h ../p/calrender.h ../p/qgetscreen.h ../p/imagerecognition.h ../p/mouseq.h ../p/validations.h ../p/workfile.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../p/main.cpp ../p/mainwindow.cpp ../p/mouse.c ../p/deadbeef_rand.c ../p/screen.c ../p/calrender.cpp ../p/qgetscreen.cpp ../p/imagerecognition.cpp ../p/mouseq.cpp ../p/validations.cpp ../p/workfile.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../p/mainwindow.ui $(DISTDIR)/
 
 
@@ -691,18 +703,12 @@ compiler_moc_header_clean:
 	-$(DEL_FILE) moc_mainwindow.cpp
 moc_mainwindow.cpp: ../../../Qt5.8.0/5.8/clang_64/lib/QtWidgets.framework/Headers/QMainWindow \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtWidgets.framework/Headers/qmainwindow.h \
-		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QString \
-		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qstring.h \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QDebug \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qdebug.h \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QUrl \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qurl.h \
-		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QUrlQuery \
-		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qurlquery.h \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QRegExp \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qregexp.h \
-		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QProcess \
-		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qprocess.h \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QVector \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qvector.h \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QSettings \
@@ -718,11 +724,9 @@ moc_mainwindow.cpp: ../../../Qt5.8.0/5.8/clang_64/lib/QtWidgets.framework/Header
 		../p/qauto.h \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QObject \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qobject.h \
-		../p/mouse.h \
-		../p/os.h \
-		../p/types.h \
-		../p/inline_keywords.h \
 		../p/microsleep.h \
+		../p/os.h \
+		../p/inline_keywords.h \
 		../p/calrender.h \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QPoint \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qpoint.h \
@@ -741,6 +745,14 @@ moc_mainwindow.cpp: ../../../Qt5.8.0/5.8/clang_64/lib/QtWidgets.framework/Header
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qbuffer.h \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QByteArray \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qbytearray.h \
+		../p/mouseq.h \
+		../p/mouse.h \
+		../p/types.h \
+		../p/validations.h \
+		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QString \
+		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qstring.h \
+		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QStringList \
+		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qstringlist.h \
 		../p/imagerecognition.h \
 		/usr/local/Cellar/opencv3/3.3.0_1/include/opencv2/opencv.hpp \
 		/usr/local/Cellar/opencv3/3.3.0_1/include/opencv2/opencv_modules.hpp \
@@ -866,6 +878,11 @@ moc_mainwindow.cpp: ../../../Qt5.8.0/5.8/clang_64/lib/QtWidgets.framework/Header
 		/usr/local/Cellar/opencv3/3.3.0_1/include/opencv2/highgui/highgui.hpp \
 		/usr/local/Cellar/opencv3/3.3.0_1/include/opencv2/ml/ml.hpp \
 		/usr/local/Cellar/opencv3/3.3.0_1/include/opencv2/imgproc/imgproc.hpp \
+		../p/workfile.h \
+		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QDateTime \
+		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qdatetime.h \
+		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QFile \
+		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qfile.h \
 		../p/mainwindow.h \
 		moc_predefs.h \
 		../../../Qt5.8.0/5.8/clang_64/bin/moc
@@ -895,18 +912,12 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean compiler_ui
 main.o: ../p/main.cpp ../p/mainwindow.h \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtWidgets.framework/Headers/QMainWindow \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtWidgets.framework/Headers/qmainwindow.h \
-		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QString \
-		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qstring.h \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QDebug \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qdebug.h \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QUrl \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qurl.h \
-		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QUrlQuery \
-		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qurlquery.h \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QRegExp \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qregexp.h \
-		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QProcess \
-		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qprocess.h \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QVector \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qvector.h \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QSettings \
@@ -922,11 +933,9 @@ main.o: ../p/main.cpp ../p/mainwindow.h \
 		../p/qauto.h \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QObject \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qobject.h \
-		../p/mouse.h \
-		../p/os.h \
-		../p/types.h \
-		../p/inline_keywords.h \
 		../p/microsleep.h \
+		../p/os.h \
+		../p/inline_keywords.h \
 		../p/calrender.h \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QPoint \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qpoint.h \
@@ -945,6 +954,14 @@ main.o: ../p/main.cpp ../p/mainwindow.h \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qbuffer.h \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QByteArray \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qbytearray.h \
+		../p/mouseq.h \
+		../p/mouse.h \
+		../p/types.h \
+		../p/validations.h \
+		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QString \
+		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qstring.h \
+		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QStringList \
+		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qstringlist.h \
 		../p/imagerecognition.h \
 		/usr/local/Cellar/opencv3/3.3.0_1/include/opencv2/opencv.hpp \
 		/usr/local/Cellar/opencv3/3.3.0_1/include/opencv2/opencv_modules.hpp \
@@ -1070,6 +1087,11 @@ main.o: ../p/main.cpp ../p/mainwindow.h \
 		/usr/local/Cellar/opencv3/3.3.0_1/include/opencv2/highgui/highgui.hpp \
 		/usr/local/Cellar/opencv3/3.3.0_1/include/opencv2/ml/ml.hpp \
 		/usr/local/Cellar/opencv3/3.3.0_1/include/opencv2/imgproc/imgproc.hpp \
+		../p/workfile.h \
+		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QDateTime \
+		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qdatetime.h \
+		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QFile \
+		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qfile.h \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtWidgets.framework/Headers/QApplication \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtWidgets.framework/Headers/qapplication.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o ../p/main.cpp
@@ -1077,18 +1099,12 @@ main.o: ../p/main.cpp ../p/mainwindow.h \
 mainwindow.o: ../p/mainwindow.cpp ../p/mainwindow.h \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtWidgets.framework/Headers/QMainWindow \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtWidgets.framework/Headers/qmainwindow.h \
-		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QString \
-		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qstring.h \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QDebug \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qdebug.h \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QUrl \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qurl.h \
-		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QUrlQuery \
-		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qurlquery.h \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QRegExp \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qregexp.h \
-		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QProcess \
-		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qprocess.h \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QVector \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qvector.h \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QSettings \
@@ -1104,11 +1120,9 @@ mainwindow.o: ../p/mainwindow.cpp ../p/mainwindow.h \
 		../p/qauto.h \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QObject \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qobject.h \
-		../p/mouse.h \
-		../p/os.h \
-		../p/types.h \
-		../p/inline_keywords.h \
 		../p/microsleep.h \
+		../p/os.h \
+		../p/inline_keywords.h \
 		../p/calrender.h \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QPoint \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qpoint.h \
@@ -1127,6 +1141,14 @@ mainwindow.o: ../p/mainwindow.cpp ../p/mainwindow.h \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qbuffer.h \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QByteArray \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qbytearray.h \
+		../p/mouseq.h \
+		../p/mouse.h \
+		../p/types.h \
+		../p/validations.h \
+		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QString \
+		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qstring.h \
+		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QStringList \
+		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qstringlist.h \
 		../p/imagerecognition.h \
 		/usr/local/Cellar/opencv3/3.3.0_1/include/opencv2/opencv.hpp \
 		/usr/local/Cellar/opencv3/3.3.0_1/include/opencv2/opencv_modules.hpp \
@@ -1252,6 +1274,11 @@ mainwindow.o: ../p/mainwindow.cpp ../p/mainwindow.h \
 		/usr/local/Cellar/opencv3/3.3.0_1/include/opencv2/highgui/highgui.hpp \
 		/usr/local/Cellar/opencv3/3.3.0_1/include/opencv2/ml/ml.hpp \
 		/usr/local/Cellar/opencv3/3.3.0_1/include/opencv2/imgproc/imgproc.hpp \
+		../p/workfile.h \
+		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QDateTime \
+		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qdatetime.h \
+		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QFile \
+		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qfile.h \
 		ui_mainwindow.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o ../p/mainwindow.cpp
 
@@ -1429,6 +1456,38 @@ imagerecognition.o: ../p/imagerecognition.cpp ../p/imagerecognition.h \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QDebug \
 		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qdebug.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o imagerecognition.o ../p/imagerecognition.cpp
+
+mouseq.o: ../p/mouseq.cpp ../p/mouseq.h \
+		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QPoint \
+		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qpoint.h \
+		../p/mouse.h \
+		../p/os.h \
+		../p/types.h \
+		../p/inline_keywords.h \
+		../p/microsleep.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mouseq.o ../p/mouseq.cpp
+
+validations.o: ../p/validations.cpp ../p/validations.h \
+		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QString \
+		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qstring.h \
+		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QStringList \
+		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qstringlist.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o validations.o ../p/validations.cpp
+
+workfile.o: ../p/workfile.cpp ../p/workfile.h \
+		../../../Qt5.8.0/5.8/clang_64/lib/QtGui.framework/Headers/QPixmap \
+		../../../Qt5.8.0/5.8/clang_64/lib/QtGui.framework/Headers/qpixmap.h \
+		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QString \
+		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qstring.h \
+		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QStringList \
+		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qstringlist.h \
+		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QDateTime \
+		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qdatetime.h \
+		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QFile \
+		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qfile.h \
+		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/QDir \
+		../../../Qt5.8.0/5.8/clang_64/lib/QtCore.framework/Headers/qdir.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o workfile.o ../p/workfile.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp

@@ -85,10 +85,10 @@ public:
     QSpinBox *spin_y;
     QSpinBox *spin_num;
     QLabel *label_19;
-    QPushButton *btn_train_start;
     QLabel *label_20;
     QCheckBox *chk_chedo_don;
     QCheckBox *chk_get_Image_toTrain;
+    QLabel *label_21;
     QWidget *tab_4;
     QTextEdit *txt_kq_server;
     QPushButton *btn_train;
@@ -355,10 +355,6 @@ public:
         label_19->setObjectName(QStringLiteral("label_19"));
         label_19->setGeometry(QRect(10, 60, 31, 20));
         label_19->setFont(font);
-        btn_train_start = new QPushButton(tab_3);
-        btn_train_start->setObjectName(QStringLiteral("btn_train_start"));
-        btn_train_start->setGeometry(QRect(150, 60, 21, 21));
-        btn_train_start->setToolTipDuration(-1);
         label_20 = new QLabel(tab_3);
         label_20->setObjectName(QStringLiteral("label_20"));
         label_20->setGeometry(QRect(90, 60, 31, 20));
@@ -368,7 +364,11 @@ public:
         chk_chedo_don->setGeometry(QRect(120, 60, 21, 20));
         chk_get_Image_toTrain = new QCheckBox(tab_3);
         chk_get_Image_toTrain->setObjectName(QStringLiteral("chk_get_Image_toTrain"));
-        chk_get_Image_toTrain->setGeometry(QRect(170, 60, 31, 20));
+        chk_get_Image_toTrain->setGeometry(QRect(170, 60, 21, 20));
+        label_21 = new QLabel(tab_3);
+        label_21->setObjectName(QStringLiteral("label_21"));
+        label_21->setGeometry(QRect(140, 60, 31, 20));
+        label_21->setFont(font);
         tabWidget_2->addTab(tab_3, QString());
         tab_4 = new QWidget();
         tab_4->setObjectName(QStringLiteral("tab_4"));
@@ -858,10 +858,6 @@ public:
         spin_num->setToolTip(QApplication::translate("MainWindow", "S\341\273\221 bot", Q_NULLPTR));
 #endif // QT_NO_TOOLTIP
         label_19->setText(QApplication::translate("MainWindow", "Num:", Q_NULLPTR));
-#ifndef QT_NO_TOOLTIP
-        btn_train_start->setToolTip(QApplication::translate("MainWindow", "Ti\341\272\277n h\303\240nh train cho n\303\272t b\341\272\257t \304\221\341\272\247u v\303\240 k\341\272\277t th\303\272c", Q_NULLPTR));
-#endif // QT_NO_TOOLTIP
-        btn_train_start->setText(QApplication::translate("MainWindow", "I", Q_NULLPTR));
         label_20->setText(QApplication::translate("MainWindow", "\304\220\306\241n:", Q_NULLPTR));
 #ifndef QT_NO_STATUSTIP
         chk_chedo_don->setStatusTip(QApplication::translate("MainWindow", "N\341\272\277u click th\303\254 ch\341\272\277 \304\221\341\273\231 \304\221\341\272\245u \304\221\306\241n k\341\273\203 c\341\272\243 v\341\273\233i 3 bots", Q_NULLPTR));
@@ -871,6 +867,7 @@ public:
         chk_get_Image_toTrain->setStatusTip(QApplication::translate("MainWindow", "Ch\341\273\245p \341\272\243nh", Q_NULLPTR));
 #endif // QT_NO_STATUSTIP
         chk_get_Image_toTrain->setText(QString());
+        label_21->setText(QApplication::translate("MainWindow", "Get I:", Q_NULLPTR));
         tabWidget_2->setTabText(tabWidget_2->indexOf(tab_3), QApplication::translate("MainWindow", "Server", Q_NULLPTR));
 #ifndef QT_NO_TOOLTIP
         btn_train->setToolTip(QApplication::translate("MainWindow", "Retrain l\341\272\241i n\341\272\277u learning k\303\255ch ho\341\272\241t", Q_NULLPTR));

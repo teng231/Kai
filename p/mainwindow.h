@@ -2,15 +2,12 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QString>
 #include <QDebug>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkReply>
 #include <QUrl>
-#include <QUrlQuery>
 #include <QRegExp>
-#include<QProcess>
 #include <QVector>
 #include <QSettings>
 #include <QMessageBox>
@@ -21,13 +18,13 @@
 
 
 #include "qauto.h"
-#include "mouse.h"
 #include "microsleep.h"
 #include "calrender.h"
 #include "qgetscreen.h"
-// custome to recognition image
+#include "mouseq.h"
+#include "validations.h"
 #include "imagerecognition.h"
-
+#include "workfile.h"
 
 namespace Ui {
 class MainWindow;
@@ -40,44 +37,36 @@ class MainWindow : public QMainWindow
 
 public:
     explicit MainWindow(QWidget *parent = 0);
-    bool kiemTra(QString);
     QStringList configs;
-    QString dinhDang(QString);
     void emptyOld();
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
-    void mainClick(QPoint);
-    void mainDoubleClick(QPoint);
-    void mainDrag(QPoint beg,QPoint end);
-    void mainMove(QPoint p);
-    int layVt(QStringList,QString);
-    QStringList phanManh(QString);
-
-    QList<int> sortControl(QString,QString);
-    void saveFile(QPixmap pixmap,QString name);
+    void closeEvent(QCloseEvent *event) override;
     QNetworkAccessManager *manager;
-    MMMouseButton btnMouse;
-    QList<QPoint> loca;
+
+    // biến bổ trợ thao tác lưu trữ
+    QList<QPoint> startPoint;
     QPoint btn_lc;
     QScreen *screen;
+
     ImageRecognition imageRec;
-    //start
+    // Biến tự định nghĩa
     QTimer *timer;
+    WorkFile *wf;
+    MouseQ mq;
+    Validations validate;
     int doAcceppt=0;
 
+    // Hàn thao tác trên con trỏ ui
     int kiemThu();
-    bool kt2(QString str);
     void sapBai(QStringList list,QStringList dvao);
     ~MainWindow();
 
-
+    // Hàm config
     void readSettings(QString str);
-    void closeEvent(QCloseEvent *event) override;
     void writeSettings();
-
     void captureCards(int );
-
-    void rewriteFileName(QStringList,QStringList);
+    void rewriteFileName(QStringList,QStringList);//
 signals:
     void updateResult(int i,QStringList list);
     void goNextSignal();
@@ -93,8 +82,6 @@ private slots:
     void on_btn_submit_auto_clicked();
 
     void activateAutoClick();
-
-    void on_btn_train_start_clicked();
 
     void on_btn_auto_pause_clicked();
 

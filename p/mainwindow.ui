@@ -761,25 +761,6 @@
        <string>Num:</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="btn_train_start">
-      <property name="geometry">
-       <rect>
-        <x>150</x>
-        <y>60</y>
-        <width>21</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="toolTip">
-       <string>Tiến hành train cho nút bắt đầu và kết thúc</string>
-      </property>
-      <property name="toolTipDuration">
-       <number>-1</number>
-      </property>
-      <property name="text">
-       <string>I</string>
-      </property>
-     </widget>
      <widget class="QLabel" name="label_20">
       <property name="geometry">
        <rect>
@@ -819,7 +800,7 @@
        <rect>
         <x>170</x>
         <y>60</y>
-        <width>31</width>
+        <width>21</width>
         <height>20</height>
        </rect>
       </property>
@@ -828,6 +809,24 @@
       </property>
       <property name="text">
        <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_21">
+      <property name="geometry">
+       <rect>
+        <x>140</x>
+        <y>60</y>
+        <width>31</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Get I:</string>
       </property>
      </widget>
     </widget>
